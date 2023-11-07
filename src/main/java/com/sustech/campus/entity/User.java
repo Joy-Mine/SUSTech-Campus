@@ -1,9 +1,14 @@
 package com.sustech.campus.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+@TableName("user")
 public class User {
     private int name;
     private String password;
     private String type;
+    @TableField("token")
     private String token;
 
     public int getName() {
