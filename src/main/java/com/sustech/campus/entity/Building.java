@@ -11,9 +11,7 @@ public class Building {
 
     private String description, details;
 
-    private double latitude;
-
-    private double longitude;
+    private double latitude, longitude;
 
     public String getName() {
         return name;
