@@ -3,15 +3,14 @@ package com.sustech.campus.servicetest;
 import com.sustech.campus.entity.User;
 import com.sustech.campus.enums.UserType;
 import com.sustech.campus.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserServiceTest {
     private final UserService userService;
     private User adminUser, normalUser;

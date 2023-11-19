@@ -53,4 +53,17 @@ public class Building {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Building other)) {
+            return false;
+        }
+        return this == other
+                || this.name.equals(other.name)
+                && this.description.equals(other.description)
+                && this.details.equals(other.details)
+                && this.latitude == other.latitude
+                && this.longitude == other.longitude;
+    }
 }

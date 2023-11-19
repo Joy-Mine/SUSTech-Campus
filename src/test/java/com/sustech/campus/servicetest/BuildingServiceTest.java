@@ -2,16 +2,18 @@ package com.sustech.campus.servicetest;
 
 import com.sustech.campus.entity.Building;
 import com.sustech.campus.service.BuildingService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BuildingServiceTest {
     private final BuildingService buildingService;
     private final Building building;
@@ -167,5 +169,42 @@ public class BuildingServiceTest {
 
         assertTrue(this.buildingService.deleteBuilding(this.building.getName()));
         assertFalse(this.buildingService.buildingExists(this.building.getName()));
+    }
+
+    @Test
+    @Order(5)
+    void testListAllBuildings() {
+        List<Building> buildings = new ArrayList<>();
+        for (int i = 0; i < 10; ++i) {
+            Building building = new Building();
+            building.setName("test_building_" + i);
+            building.setDescription("description_" + i);
+            building.setDetails("details_" + i);
+            building.setLatitude(-i);
+            building.setLongitude(i);
+            buildings.add(building);
+        }
+
+        for (Building building : buildings) {
+            assertFalse(this.buildingService.buildingExists(building.getName()));
+            assertTrue(this.buildingService.addBuilding(
+                    building.getName(),
+                    building.getDescription(),
+                    building.getDetails(),
+                    building.getLatitude(),
+                    building.getLongitude()
+            ));
+        }
+
+        assertIterableEquals(
+                this.buildingService.listAllBuildings().stream()
+                        .sorted(Comparator.comparing(Building::getName)).toList(),
+                buildings.stream().sorted(Comparator.comparing(Building::getName)).toList()
+        );
+
+        for (Building building : buildings) {
+            assertTrue(this.buildingService.deleteBuilding(building.getName()));
+            assertFalse(this.buildingService.buildingExists(building.getName()));
+        }
     }
 }
