@@ -1,20 +1,22 @@
 package com.sustech.campus.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.sustech.campus.enums.UserType;
 
 @TableName("user")
 public class User {
-    private int name;
+    @TableId(type = IdType.INPUT)
+    private String name;
     private String password;
-    private String type;
-    @TableField("token")
+    private UserType type;
     private String token;
 
-    public int getName() {
+    public String getName() {
         return name;
     }
-    public void setName(int name) {
+    public void setName(String name) {
         this.name = name;
     }
     public String getPassword() {
@@ -23,10 +25,10 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-    public String getType() {
+    public UserType getType() {
         return type;
     }
-    public void setType(String type) {
+    public void setType(UserType type) {
         this.type = type;
     }
     public String getToken() {
