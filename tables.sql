@@ -33,7 +33,7 @@ create table building
 
 create table building_photo
 (
-    id       int          not null,
+    id       bigint       not null,
     building varchar(255) not null,
     path     text         not null,
     primary key (id),
@@ -66,7 +66,7 @@ create table route
 
 create table comment
 (
-    id        int          not null,
+    id        bigint       not null,
     building  varchar(255) not null,
     commenter varchar(255) not null,
     content   text         not null,
@@ -78,9 +78,9 @@ create table comment
 
 create table comment_photo
 (
-    id        int  not null,
-    commentId int  not null,
-    path      text not null,
+    id        bigint not null,
+    commentId bigint not null,
+    path      text   not null,
     primary key (id),
     constraint foreign key (commentId) references comment (id)
 );
@@ -93,7 +93,7 @@ create table store
 
 create table goods
 (
-    id       int           not null,
+    id       bigint        not null,
     name     varchar(255)  not null,
     store    varchar(255)  not null,
     price    numeric(8, 2) not null,
@@ -104,14 +104,14 @@ create table goods
 
 create table goods_photo
 (
-    goodsId int  not null,
-    path    text not null,
+    goodsId bigint not null,
+    path    text   not null,
     constraint foreign key (goodsId) references goods (id)
 );
 
 create table `order`
 (
-    id        int          not null,
+    id        bigint       not null,
     status    varchar(255) not null,
     purchaser varchar(255) not null,
     time      time         not null,
@@ -121,9 +121,9 @@ create table `order`
 
 create table order_item
 (
-    orderId int not null,
-    goodsId int not null,
-    amount  int not null,
+    orderId bigint not null,
+    goodsId bigint not null,
+    amount  int    not null,
     primary key (orderId, goodsId),
     constraint foreign key (orderId) references `order` (id),
     constraint foreign key (goodsId) references goods (id)

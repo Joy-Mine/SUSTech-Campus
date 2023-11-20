@@ -1,7 +1,10 @@
 package com.sustech.campus.serviceImpl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sustech.campus.entity.Building;
+import com.sustech.campus.entity.BuildingPhoto;
 import com.sustech.campus.mapper.BuildingMapper;
+import com.sustech.campus.mapper.BuildingPhotoMapper;
 import com.sustech.campus.service.BuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,9 +16,12 @@ public class BuildingServiceImpl implements BuildingService {
 
     private BuildingMapper buildingMapper;
 
+    private BuildingPhotoMapper buildingPhotoMapper;
+
     @Autowired
-    public BuildingServiceImpl(BuildingMapper buildingMapper) {
+    public BuildingServiceImpl(BuildingMapper buildingMapper, BuildingPhotoMapper buildingPhotoMapper) {
         this.buildingMapper = buildingMapper;
+        this.buildingPhotoMapper = buildingPhotoMapper;
     }
 
     @Override
@@ -53,6 +59,9 @@ public class BuildingServiceImpl implements BuildingService {
         if (!this.buildingExists(name)) {
             return false;
         }
+        QueryWrapper<BuildingPhoto> wrapper = new QueryWrapper<>();
+        wrapper.eq("building", name);
+        this.buildingPhotoMapper.delete(wrapper);
         this.buildingMapper.deleteById(name);
         return true;
     }

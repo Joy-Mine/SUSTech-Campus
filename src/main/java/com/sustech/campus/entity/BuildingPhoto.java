@@ -36,4 +36,24 @@ public class BuildingPhoto {
     public void setPath(String path) {
         this.path = path;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof BuildingPhoto other)) {
+            return false;
+        }
+        return obj == this
+                || this.id.equals(other.id)
+                && this.building.equals(other.building)
+                && this.path.equals(other.path);
+    }
+
+    @Override
+    public String toString() {
+        return "BuildingPhoto{" +
+                "id=" + id +
+                ", building='" + building + "'" +
+                ", path='" + path + "'" +
+                '}';
+    }
 }
