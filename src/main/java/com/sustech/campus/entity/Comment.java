@@ -3,6 +3,7 @@ package com.sustech.campus.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.sustech.campus.enums.CommentStatus;
 
 @TableName("comment")
 public class Comment {
@@ -11,7 +12,7 @@ public class Comment {
 
     private String building, commenter, content;
 
-    private boolean approved;
+    private CommentStatus status;
 
     public Long getId() {
         return id;
@@ -45,11 +46,11 @@ public class Comment {
         this.content = content;
     }
 
-    public boolean isApproved() {
-        return approved;
+    public CommentStatus getStatus() {
+        return status;
     }
 
-    public void setApproved(boolean approved) {
-        this.approved = approved;
+    public void setStatus(CommentStatus status) {
+        this.status = status;
     }
 }

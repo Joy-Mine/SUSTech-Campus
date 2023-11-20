@@ -70,7 +70,7 @@ create table comment
     building  varchar(255) not null,
     commenter varchar(255) not null,
     content   text         not null,
-    approved  bool         not null,
+    status    int          not null,
     primary key (id),
     constraint foreign key (building) references building (name),
     constraint foreign key (commenter) references `user` (name)
