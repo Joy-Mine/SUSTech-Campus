@@ -40,7 +40,7 @@ public interface BuildingService {
     boolean deleteBuilding(String name);
 
     /**
-     * @param name the name of the building
+     * @param name      the name of the building
      * @param latitude
      * @param longitude
      * @return false if failed to change the location, otherwise true
@@ -48,14 +48,14 @@ public interface BuildingService {
     boolean changeBuildingLocation(String name, double latitude, double longitude);
 
     /**
-     * @param name the name of the building
+     * @param name        the name of the building
      * @param description new description
      * @return false if failed to change the description, otherwise true
      */
     boolean changeBuildingDescription(String name, String description);
 
     /**
-     * @param name the name of the building
+     * @param name    the name of the building
      * @param details new details
      * @return false if failed to change the details, otherwise true
      */

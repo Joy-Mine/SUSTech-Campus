@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceTest {
     private final UserService userService;
     private User adminUser, normalUser;
+
     @Autowired
     public UserServiceTest(UserService userService) {
         this.userService = userService;
@@ -61,7 +62,7 @@ public class UserServiceTest {
                     user.getPassword()
             );
         }
-        for (User user: users) {
+        for (User user : users) {
             assertTrue(this.userService.deleteUser(user.getName()));
             assertFalse(this.userService.userExists(user.getName()));
             assertNull(this.userService.getUserByName(user.getName()));

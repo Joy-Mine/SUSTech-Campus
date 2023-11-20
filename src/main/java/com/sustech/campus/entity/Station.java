@@ -34,4 +34,24 @@ public class Station {
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Station other)) {
+            return false;
+        }
+        return this == other
+                || this.name.equals(other.name)
+                && this.latitude == other.latitude
+                && this.longitude == other.longitude;
+    }
+
+    @Override
+    public String toString() {
+        return "Station{" +
+                "name='" + this.name + "'" +
+                ", latitude=" + this.latitude +
+                ", longitude=" + this.longitude +
+                '}';
+    }
 }

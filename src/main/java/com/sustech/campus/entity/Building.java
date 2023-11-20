@@ -66,4 +66,13 @@ public class Building {
                 && this.latitude == other.latitude
                 && this.longitude == other.longitude;
     }
+
+    @Override
+    public String toString() {
+        return "Building{" +
+                "name='" + this.name + "'" +
+                ", latitude='" + this.latitude +
+                ", longitude='" + this.longitude +
+                '}';
+    }
 }

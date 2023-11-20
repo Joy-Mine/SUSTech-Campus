@@ -56,10 +56,10 @@ create table station
 
 create table route
 (
-    bus     varchar(255) not null,
-    station varchar(255) not null,
-    `order` int          not null,
-    primary key (bus, station),
+    bus       varchar(255) not null,
+    station   varchar(255) not null,
+    stopOrder int          not null,
+    primary key (bus, stopOrder),
     constraint foreign key (bus) references bus (name),
     constraint foreign key (station) references station (name)
 );
@@ -78,11 +78,11 @@ create table comment
 
 create table comment_photo
 (
-    id         int  not null,
-    comment_id int  not null,
-    path       text not null,
+    id        int  not null,
+    commentId int  not null,
+    path      text not null,
     primary key (id),
-    constraint foreign key (comment_id) references comment (id)
+    constraint foreign key (commentId) references comment (id)
 );
 
 create table store
@@ -104,9 +104,9 @@ create table goods
 
 create table goods_photo
 (
-    goods_id int  not null,
-    path     text not null,
-    constraint foreign key (goods_id) references goods (id)
+    goodsId int  not null,
+    path    text not null,
+    constraint foreign key (goodsId) references goods (id)
 );
 
 create table `order`
@@ -121,11 +121,11 @@ create table `order`
 
 create table order_item
 (
-    order_id int not null,
-    goods_id int not null,
-    amount   int not null,
-    primary key (order_id, goods_id),
-    constraint foreign key (order_id) references `order` (id),
-    constraint foreign key (goods_id) references goods (id)
+    orderId int not null,
+    goodsId int not null,
+    amount  int not null,
+    primary key (orderId, goodsId),
+    constraint foreign key (orderId) references `order` (id),
+    constraint foreign key (goodsId) references goods (id)
 );
 

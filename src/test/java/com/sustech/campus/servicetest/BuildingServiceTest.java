@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BuildingServiceTest {
     private final BuildingService buildingService;
     private final Building building;
+
     @Autowired
     public BuildingServiceTest(BuildingService buildingService) {
         this.buildingService = buildingService;
