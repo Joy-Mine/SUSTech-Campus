@@ -53,4 +53,28 @@ public class Comment {
     public void setStatus(CommentStatus status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", building='" + building + "'" +
+                ", commenter='" + commenter + "'" +
+                ", content='" + content + "'" +
+                ", status=" + status +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Comment other)) {
+            return false;
+        }
+        return this == other
+                || this.id.equals(other.id)
+                && this.building.equals(other.building)
+                && this.commenter.equals(other.commenter)
+                && this.content.equals(other.content)
+                && this.status == other.status;
+    }
 }
