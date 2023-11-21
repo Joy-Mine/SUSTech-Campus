@@ -7,10 +7,25 @@ import com.sustech.campus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
+
+    private String generateToken(String oldToken) {
+        int length = 32;
+        Random random = new Random();
+        StringBuilder builder;
+        do {
+            builder = new StringBuilder();
+            for (int i = 0; i < length; ++i) {
+                builder.append((char) random.nextInt(33, 127));
+            }
+        } while (builder.toString().equals(oldToken));
+        return builder.toString();
+    }
 
     @Autowired
     public UserServiceImpl(UserMapper userMapper) {
@@ -23,22 +38,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserType getUserType(String username) {
+        User user = this.getUserByName(username);
+        if (user == null) {
+            return null;
+        }
+        return user.getType();
+    }
+
+    @Override
     public boolean userExists(String username) {
         return this.userMapper.selectById(username) != null;
     }
 
     @Override
-    public boolean registerUser(String username, String password, UserType type) {
+    public String registerUser(String username, String password, UserType type) {
         if (this.userExists(username)) {
-            return false;
+            return null;
         }
         User user = new User();
         user.setName(username);
         user.setPassword(password);
         user.setType(type);
-        user.setToken("deadbeef");
+        user.setToken(this.generateToken(null));
         this.userMapper.insert(user);
-        return true;
+        return user.getToken();
     }
 
     @Override
@@ -59,5 +83,22 @@ public class UserServiceImpl implements UserService {
         }
         this.userMapper.deleteById(username);
         return true;
+    }
+
+    @Override
+    public boolean checkToken(String username, String token) {
+        User user = this.getUserByName(username);
+        return user != null && user.getToken().equals(token);
+    }
+
+    @Override
+    public String changeToken(String username) {
+        User user = this.getUserByName(username);
+        if (user == null) {
+            return null;
+        }
+        user.setToken(this.generateToken(user.getToken()));
+        this.userMapper.updateById(user);
+        return user.getToken();
     }
 }

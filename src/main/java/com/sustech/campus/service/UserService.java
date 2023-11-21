@@ -12,6 +12,12 @@ public interface UserService {
 
     /**
      * @param username
+     * @return null if the user does not exist, otherwise the type of the user
+     */
+    UserType getUserType(String username);
+
+    /**
+     * @param username
      * @return whether the user with the given username exists
      */
     boolean userExists(String username);
@@ -20,9 +26,9 @@ public interface UserService {
      * @param username
      * @param password
      * @param type
-     * @return whether registration succeed
+     * @return null if registration failed, otherwise, the token of the user
      */
-    boolean registerUser(String username, String password, UserType type);
+    String registerUser(String username, String password, UserType type);
 
     /**
      * @param username
@@ -36,4 +42,18 @@ public interface UserService {
      * @return whether deletion succeed
      */
     boolean deleteUser(String username);
+
+    /**
+     * @param username
+     * @param token
+     * @return whether the given token is the same as the token in the database
+     */
+    boolean checkToken(String username, String token);
+
+    /**
+     * change the token of the user with the given username
+     * @param username
+     * @return null if failed to change the token, otherwise, the new token
+     */
+    String changeToken(String username);
 }
