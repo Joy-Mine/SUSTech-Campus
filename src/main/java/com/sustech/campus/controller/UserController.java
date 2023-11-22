@@ -1,19 +1,61 @@
 package com.sustech.campus.controller;
 
-import com.sustech.campus.mapper.UserMapper;
+import com.sustech.campus.entity.User;
+import com.sustech.campus.enums.UserType;
+import com.sustech.campus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
-    @Autowired
-    private UserMapper userMapper;
 
-    @GetMapping("/user/{id}")
-    public String getUserByID(@PathVariable int id){
-        return userMapper.selectById(id).toString();
-//        return "user: "+id;
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<User> getUserByName(@PathVariable String username) {
+        User user = userService.getUserByName(username);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody User user) {
+        String success = userService.registerUser(user.getName(), user.getPassword(), user.getType());
+        if (success!=null) {
+            return ResponseEntity.ok("User registered successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("Registration failed: User already exists.");
+        }
+    }
+
+    @PutMapping("/changeType/{username}")
+    public ResponseEntity<String> changeUserType(@PathVariable String username, @RequestBody UserType newType) {
+        boolean success = userService.changeUserType(username, newType);
+        if (success) {
+            return ResponseEntity.ok("User type updated successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+    }
+
+    @DeleteMapping("/{username}")
+    public ResponseEntity<String> deleteUser(@PathVariable String username) {
+        boolean success = userService.deleteUser(username);
+        if (success) {
+            return ResponseEntity.ok("User deleted successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
     }
 }
