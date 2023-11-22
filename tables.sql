@@ -104,8 +104,10 @@ create table goods
 
 create table goods_photo
 (
+    id      bigint not null,
     goodsId bigint not null,
     path    text   not null,
+    primary key (id),
     constraint foreign key (goodsId) references goods (id)
 );
 
