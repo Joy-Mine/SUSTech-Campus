@@ -30,17 +30,17 @@ public class StoreController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addStore(@RequestBody Store store) {
-        boolean success = storeService.addStore(store.getName());
-        if (success) {
+        Long storeId = storeService.addStore(store.getName());
+        if (storeId != null) {
             return ResponseEntity.ok("Store added successfully.");
         } else {
             return ResponseEntity.badRequest().body("Store already exists.");
         }
     }
 
-    @DeleteMapping("/delete/{storeName}")
-    public ResponseEntity<String> deleteStore(@PathVariable String storeName) {
-        boolean success = storeService.deleteStore(storeName);
+    @DeleteMapping("/delete/{storeId}")
+    public ResponseEntity<String> deleteStore(@PathVariable Long storeId) {
+        boolean success = storeService.deleteStore(storeId);
         if (success) {
             return ResponseEntity.ok("Store deleted successfully.");
         } else {
@@ -48,9 +48,9 @@ public class StoreController {
         }
     }
 
-    @GetMapping("/goods/{storeName}")
-    public ResponseEntity<List<Goods>> listAllGoods(@PathVariable String storeName) {
-        List<Goods> goods = storeService.listAllGoods(storeName);
+    @GetMapping("/goods/{storeId}")
+    public ResponseEntity<List<Goods>> listAllGoods(@PathVariable Long storeId) {
+        List<Goods> goods = storeService.listAllGoods(storeId);
         if (goods != null && !goods.isEmpty()) {
             return ResponseEntity.ok(goods);
         } else {
@@ -60,7 +60,7 @@ public class StoreController {
 
     @PostMapping("/goods/add")
     public ResponseEntity<String> addGoods(@RequestBody Goods goods) {
-        Long goodsId = storeService.addGoods(goods.getStore(), goods.getName(), goods.getPrice(), goods.getQuantity());
+        Long goodsId = storeService.addGoods(goods.getStoreId(), goods.getName(), goods.getPrice(), goods.getQuantity());
         if (goodsId != null) {
             return ResponseEntity.ok("Goods added successfully. ID: " + goodsId);
         } else {

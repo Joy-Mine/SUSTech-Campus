@@ -31,17 +31,17 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
-        String success = userService.registerUser(user.getName(), user.getPassword(), user.getType());
-        if (success!=null) {
+        Long userId = userService.registerUser(user.getName(), user.getPassword(), user.getType());
+        if (userId != null) {
             return ResponseEntity.ok("User registered successfully.");
         } else {
             return ResponseEntity.badRequest().body("Registration failed: User already exists.");
         }
     }
 
-    @PutMapping("/changeType/{username}")
-    public ResponseEntity<String> changeUserType(@PathVariable String username, @RequestBody UserType newType) {
-        boolean success = userService.changeUserType(username, newType);
+    @PutMapping("/changeType/{id}")
+    public ResponseEntity<String> changeUserType(@PathVariable Long id, @RequestBody UserType newType) {
+        boolean success = userService.changeUserType(id, newType);
         if (success) {
             return ResponseEntity.ok("User type updated successfully.");
         } else {
@@ -49,9 +49,9 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{username}")
-    public ResponseEntity<String> deleteUser(@PathVariable String username) {
-        boolean success = userService.deleteUser(username);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        boolean success = userService.deleteUser(id);
         if (success) {
             return ResponseEntity.ok("User deleted successfully.");
         } else {

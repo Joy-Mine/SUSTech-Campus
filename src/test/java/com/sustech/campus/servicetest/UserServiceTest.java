@@ -40,15 +40,17 @@ public class UserServiceTest {
     @BeforeEach
     void insert() {
         for (User user : this.users) {
-            user.setToken(this.userService.registerUser(user.getName(), user.getPassword(), user.getType()));
+            user.setId(this.userService.registerUser(user.getName(), user.getPassword(), user.getType()));
+            user.setToken(this.userService.getUserById(user.getId()).getToken());
             assertNotNull(user.getToken());
+            assertNotNull(user.getId());
         }
     }
 
     @AfterEach
     void clean() {
         for (User user : this.users) {
-            assertTrue(this.userService.deleteUser(user.getName()));
+            assertTrue(this.userService.deleteUser(user.getId()));
         }
     }
 
@@ -65,61 +67,90 @@ public class UserServiceTest {
 
     @Test
     @Order(2)
+    void testGetUserById() {
+        for (User user : this.users) {
+            assertEquals(
+                    this.userService.getUserById(user.getId()),
+                    user
+            );
+        }
+    }
+
+    @Test
+    @Order(3)
     void testGetUserType() {
         for (User user : this.users) {
             assertEquals(
-                    this.userService.getUserType(user.getName()),
+                    this.userService.getUserType(user.getId()),
                     user.getType()
             );
         }
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     void testUserExists() {
         for (User user : this.users) {
             assertTrue(this.userService.userExists(user.getName()));
+            assertTrue(this.userService.userExists(user.getId()));
         }
     }
 
     @Test
-    @Order(3)
+    @Order(5)
     void testChangeUserType() {
         for (User user : this.users) {
             assertTrue(this.userService.changeUserType(
-                    user.getName(),
+                    user.getId(),
                     UserType.MUTED
             ));
             assertEquals(
-                    this.userService.getUserType(user.getName()),
+                    this.userService.getUserType(user.getId()),
                     UserType.MUTED
             );
         }
     }
 
     @Test
-    @Order(4)
+    @Order(6)
     void testCheckToken() {
         for (User user : this.users) {
             assertTrue(this.userService.checkToken(
-                    user.getName(),
+                    user.getId(),
                     user.getToken()
             ));
             assertFalse(this.userService.checkToken(
-                    user.getName(),
+                    user.getId(),
                     user.getToken() + "foo"
             ));
         }
     }
 
     @Test
-    @Order(5)
+    @Order(7)
     void testChangeToken() {
         for (User user : this.users) {
-            String newToken = this.userService.changeToken(user.getName());
+            String newToken = this.userService.changeToken(user.getId());
             assertNotNull(newToken);
             assertNotEquals(newToken, user.getToken());
-            assertTrue(this.userService.checkToken(user.getName(), newToken));
+            assertTrue(this.userService.checkToken(user.getId(), newToken));
         }
     }
+
+    @Test
+    @Order(8)
+    void testChangeUserName() {
+        for (User user : this.users) {
+            assertTrue(this.userService.changeUserName(
+                    user.getId(),
+                    user.getName() + "_new"
+            ));
+            user.setName(user.getName() + "_new");
+            assertEquals(
+                    this.userService.getUserById(user.getId()),
+                    user
+            );
+        }
+    }
+
 }

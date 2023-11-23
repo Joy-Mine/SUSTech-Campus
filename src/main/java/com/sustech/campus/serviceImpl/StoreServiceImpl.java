@@ -35,19 +35,26 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public boolean addStore(String storeName) {
+    public Long addStore(String storeName) {
         if (this.storeExists(storeName)) {
-            return false;
+            return null;
         }
         Store store = new Store();
         store.setName(storeName);
         this.storeMapper.insert(store);
-        return true;
+        return store.getId();
+    }
+
+    @Override
+    public Store getStoreById(Long storeId) {
+        return this.storeMapper.selectById(storeId);
     }
 
     @Override
     public Store getStoreByName(String storeName) {
-        return this.storeMapper.selectById(storeName);
+        QueryWrapper<Store> wrapper = new QueryWrapper<>();
+        wrapper.eq("name", storeName);
+        return this.storeMapper.selectOne(wrapper);
     }
 
     @Override
@@ -56,26 +63,31 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public boolean deleteStore(String storeName) {
-        if (!(this.storeExists(storeName))) {
+    public boolean storeExists(Long storeId) {
+        return this.getStoreById(storeId) != null;
+    }
+
+    @Override
+    public boolean deleteStore(Long storeId) {
+        if (!(this.storeExists(storeId))) {
             return false;
         }
-        List<Goods> goodsList = this.listAllGoods(storeName);
+        List<Goods> goodsList = this.listAllGoods(storeId);
         for (Goods goods : goodsList) {
             this.deleteGoods(goods.getId());
         }
-        this.storeMapper.deleteById(storeName);
+        this.storeMapper.deleteById(storeId);
         return true;
     }
 
     @Override
-    public Long addGoods(String storeName, String goodsName, BigDecimal price, Integer quantity) {
-        if (this.getGoodsByName(storeName, goodsName) != null) {
+    public Long addGoods(Long storeId, String goodsName, BigDecimal price, Integer quantity) {
+        if (this.getGoodsByName(storeId, goodsName) != null) {
             return null;
         }
         Goods goods = new Goods();
         goods.setName(goodsName);
-        goods.setStore(storeName);
+        goods.setStoreId(storeId);
         goods.setPrice(price);
         goods.setQuantity(quantity);
         this.goodsMapper.insert(goods);
@@ -83,12 +95,12 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public List<Goods> listAllGoods(String storeName) {
-        if (!this.storeExists(storeName)) {
+    public List<Goods> listAllGoods(Long storeId) {
+        if (!this.storeExists(storeId)) {
             return null;
         }
         QueryWrapper<Goods> wrapper = new QueryWrapper<>();
-        wrapper.eq("store", storeName);
+        wrapper.eq("storeId", storeId);
         return this.goodsMapper.selectList(wrapper);
     }
 
@@ -98,9 +110,9 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public Goods getGoodsByName(String storeName, String goodsName) {
+    public Goods getGoodsByName(Long storeId, String goodsName) {
         QueryWrapper<Goods> wrapper = new QueryWrapper<>();
-        wrapper.eq("store", storeName);
+        wrapper.eq("storeId", storeId);
         wrapper.eq("name", goodsName);
         return this.goodsMapper.selectOne(wrapper);
     }

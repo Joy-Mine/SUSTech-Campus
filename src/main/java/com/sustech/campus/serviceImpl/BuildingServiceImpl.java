@@ -30,19 +30,26 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public Building getBuildingByName(String name) {
-        return buildingMapper.selectById(name);
+    public Building getBuildingById(Long buildingId) {
+        return buildingMapper.selectById(buildingId);
     }
 
     @Override
-    public boolean buildingExists(String name) {
-        return this.getBuildingByName(name) != null;
+    public Building getBuildingByName(String buildingName) {
+        QueryWrapper<Building> wrapper = new QueryWrapper<>();
+        wrapper.eq("name", buildingName);
+        return buildingMapper.selectOne(wrapper);
     }
 
     @Override
-    public boolean addBuilding(String name, String description, String details, double latitude, double longitude) {
-        if (this.buildingExists(name)) {
-            return false;
+    public boolean buildingExists(Long buildingId) {
+        return this.getBuildingById(buildingId) != null;
+    }
+
+    @Override
+    public Long addBuilding(String name, String description, String details, double latitude, double longitude) {
+        if (this.getBuildingByName(name) != null) {
+            return null;
         }
         Building building = new Building();
         building.setName(name);
@@ -51,94 +58,105 @@ public class BuildingServiceImpl implements BuildingService {
         building.setLatitude(latitude);
         building.setLongitude(longitude);
         this.buildingMapper.insert(building);
-        return true;
+        return building.getId();
     }
 
     @Override
-    public boolean deleteBuilding(String name) {
-        if (!this.buildingExists(name)) {
+    public boolean deleteBuilding(Long buildingId) {
+        if (!this.buildingExists(buildingId)) {
             return false;
         }
         QueryWrapper<BuildingPhoto> wrapper = new QueryWrapper<>();
-        wrapper.eq("building", name);
+        wrapper.eq("buildingId", buildingId);
         this.buildingPhotoMapper.delete(wrapper);
-        this.buildingMapper.deleteById(name);
+        this.buildingMapper.deleteById(buildingId);
         return true;
     }
 
     @Override
-    public boolean changeBuildingLocation(String name, double latitude, double longitude) {
-        Building building = this.getBuildingByName(name);
+    public boolean changeBuildingName(Long buildingId, String newName) {
+        Building building = this.getBuildingById(buildingId);
         if (building == null) {
             return false;
         }
-        building.setLatitude(latitude);
-        building.setLongitude(longitude);
+        building.setName(newName);
+        this.buildingMapper.updateById(building);
+        return true;
+    }
+
+
+    @Override
+    public boolean changeBuildingLocation(Long buildingId, double newLatitude, double newLongitude) {
+        Building building = this.getBuildingById(buildingId);
+        if (building == null) {
+            return false;
+        }
+        building.setLatitude(newLatitude);
+        building.setLongitude(newLongitude);
         this.buildingMapper.updateById(building);
         return true;
     }
 
     @Override
-    public boolean changeBuildingDescription(String name, String description) {
-        Building building = this.getBuildingByName(name);
+    public boolean changeBuildingDescription(Long buildingId, String newDescription) {
+        Building building = this.getBuildingById(buildingId);
         if (building == null) {
             return false;
         }
-        building.setDescription(description);
+        building.setDescription(newDescription);
         this.buildingMapper.updateById(building);
         return true;
     }
 
     @Override
-    public boolean changeBuildingDetails(String name, String details) {
-        Building building = this.getBuildingByName(name);
+    public boolean changeBuildingDetails(Long buildingId, String newDetails) {
+        Building building = this.getBuildingById(buildingId);
         if (building == null) {
             return false;
         }
-        building.setDetails(details);
+        building.setDetails(newDetails);
         this.buildingMapper.updateById(building);
         return true;
     }
 
     @Override
-    public List<BuildingPhoto> listBuildingPhotos(String buildingName) {
-        if (this.buildingMapper.selectById(buildingName) == null) {
+    public List<BuildingPhoto> listBuildingPhotos(Long buildingId) {
+        if (!this.buildingExists(buildingId)) {
             return null;
         }
         QueryWrapper<BuildingPhoto> wrapper = new QueryWrapper<>();
-        wrapper.eq("building", buildingName);
+        wrapper.eq("buildingId", buildingId);
         return this.buildingPhotoMapper.selectList(wrapper);
     }
 
     @Override
-    public BuildingPhoto getBuildingPhotoById(Long id) {
-        return this.buildingPhotoMapper.selectById(id);
+    public BuildingPhoto getBuildingPhotoById(Long photoId) {
+        return this.buildingPhotoMapper.selectById(photoId);
     }
 
     @Override
-    public Long addBuildingPhoto(String buildingName, String path) {
-        if (this.buildingMapper.selectById(buildingName) == null) {
+    public Long addBuildingPhoto(Long buildingId, String path) {
+        if (!this.buildingExists(buildingId)) {
             return null;
         }
         BuildingPhoto photo = new BuildingPhoto();
-        photo.setBuilding(buildingName);
+        photo.setBuildingId(buildingId);
         photo.setPath(path);
         this.buildingPhotoMapper.insert(photo);
         return photo.getId();
     }
 
     @Override
-    public boolean deleteBuildingPhoto(Long id) {
-        if (!this.buildingPhotoExists(id)) {
+    public boolean deleteBuildingPhoto(Long photoId) {
+        if (!this.buildingPhotoExists(photoId)) {
             return false;
         }
-        this.buildingPhotoMapper.deleteById(id);
+        this.buildingPhotoMapper.deleteById(photoId);
         return true;
     }
 
     @Override
-    public boolean buildingPhotoExists(Long id) {
-        return this.getBuildingPhotoById(id) != null;
+    public boolean buildingPhotoExists(Long photoId) {
+        return this.getBuildingPhotoById(photoId) != null;
     }
-
 }

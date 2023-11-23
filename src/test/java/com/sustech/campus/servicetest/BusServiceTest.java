@@ -36,6 +36,10 @@ public class BusServiceTest {
         this.stations = new ArrayList<>();
         this.buses = new ArrayList<>();
         this.routes = new ArrayList<>();
+    }
+
+    @BeforeEach
+    void insert() {
         int numBuses = 4;
         int numStations = 10;
         int numStationPerLine = 5;
@@ -44,38 +48,35 @@ public class BusServiceTest {
             station.setName("test_station_" + i);
             station.setLatitude(i);
             station.setLongitude(-i);
+            Long stationId = this.stationService.addStation(
+                    station.getName(),
+                    station.getLatitude(),
+                    station.getLongitude()
+            );
+            station.setId(stationId);
             this.stations.add(station);
         }
         for (int i = 0; i < numBuses; ++i) {
             Bus bus = new Bus();
             bus.setName("test_bus_" + i);
+            Long busId = this.busService.addBusLine(bus.getName());
+            assertNotNull(busId);
+            bus.setId(busId);
             this.buses.add(bus);
+
             ArrayList<Route> arrayList = new ArrayList<>();
             for (int j = 0; j < numStationPerLine; ++j) {
                 int stationId = new Random().nextInt(numStations);
                 Route route = new Route();
-                route.setBus(bus.getName());
-                route.setStation(this.stations.get(stationId).getName());
+                route.setBusId(bus.getId());
+                route.setStationId(this.stations.get(stationId).getId());
                 route.setStopOrder(j);
                 arrayList.add(route);
             }
             this.routes.add(arrayList);
-        }
-    }
-
-    @BeforeEach
-    void insert() {
-        for (Station station : this.stations) {
-            assertTrue(this.stationService.addStation(
-                    station.getName(),
-                    station.getLatitude(),
-                    station.getLongitude()
-            ));
-        }
-        for (int i = 0; i < this.buses.size(); ++i) {
-            assertTrue(this.busService.addBusLine(
-                    this.buses.get(i).getName(),
-                    this.routes.get(i).stream().map(Route::getStation).toList()
+            assertTrue(this.busService.changeBusStations(
+                    this.buses.get(i).getId(),
+                    this.routes.get(i).stream().map(Route::getStationId).toList()
             ));
         }
     }
@@ -83,10 +84,10 @@ public class BusServiceTest {
     @AfterEach
     void clean() {
         for (Bus bus : this.buses) {
-            assertTrue(this.busService.deleteBusLine(bus.getName()));
+            assertTrue(this.busService.deleteBusLine(bus.getId()));
         }
         for (Station station : this.stations) {
-            assertTrue(this.stationService.deleteStation(station.getName()));
+            this.stationService.deleteStation(station.getId());
         }
     }
 
@@ -95,6 +96,7 @@ public class BusServiceTest {
     void testBusLineExists() {
         for (Bus bus : this.buses) {
             assertTrue(this.busService.busLineExists(bus.getName()));
+            assertTrue(this.busService.busLineExists(bus.getId()));
         }
     }
 
@@ -109,12 +111,12 @@ public class BusServiceTest {
 
     @Test
     @Order(3)
-    void testGetStationNames() {
+    void testGetStationIds() {
         for (int i = 0; i < this.buses.size(); ++i) {
             assertIterableEquals(
-                    this.busService.getStationNames(this.buses.get(i).getName()),
+                    this.busService.getStationIds(this.buses.get(i).getId()),
                     this.routes.get(i).stream().sorted(Comparator.comparing(Route::getStopOrder))
-                            .map(Route::getStation).toList()
+                            .map(Route::getStationId).toList()
             );
         }
     }
@@ -124,9 +126,9 @@ public class BusServiceTest {
     void testGetStations() {
         for (int i = 0; i < this.buses.size(); ++i) {
             assertIterableEquals(
-                    this.busService.getStations(this.buses.get(i).getName()),
+                    this.busService.getStations(this.buses.get(i).getId()),
                     this.routes.get(i).stream().sorted(Comparator.comparing(Route::getStopOrder))
-                            .flatMap(e1 -> this.stations.stream().filter(e2 -> e2.getName().equals(e1.getStation())))
+                            .flatMap(e1 -> this.stations.stream().filter(e2 -> e2.getId().equals(e1.getStationId())))
                             .toList()
             );
         }
@@ -134,17 +136,17 @@ public class BusServiceTest {
 
     @Test
     @Order(5)
-    void testSetStations() {
+    void testChangeBusStations() {
         for (int i = 0; i < this.buses.size(); ++i) {
-            assertTrue(this.busService.setStations(
-                    this.buses.get(i).getName(),
+            assertTrue(this.busService.changeBusStations(
+                    this.buses.get(i).getId(),
                     this.routes.get(i).stream().sorted(Comparator.comparing(Route::getStopOrder).reversed())
-                            .map(Route::getStation).toList()
+                            .map(Route::getStationId).toList()
             ));
             assertIterableEquals(
-                    this.busService.getStations(this.buses.get(i).getName()),
+                    this.busService.getStations(this.buses.get(i).getId()),
                     this.routes.get(i).stream().sorted(Comparator.comparing(Route::getStopOrder).reversed())
-                            .flatMap(e1 -> this.stations.stream().filter(e2 -> e2.getName().equals(e1.getStation())))
+                            .flatMap(e1 -> this.stations.stream().filter(e2 -> e2.getId().equals(e1.getStationId())))
                             .toList()
             );
         }

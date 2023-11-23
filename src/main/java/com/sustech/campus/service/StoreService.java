@@ -1,8 +1,6 @@
 package com.sustech.campus.service;
 
-import com.sustech.campus.entity.Goods;
-import com.sustech.campus.entity.GoodsPhoto;
-import com.sustech.campus.entity.Store;
+import com.sustech.campus.entity.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,9 +13,9 @@ public interface StoreService {
 
     /**
      * @param storeName
-     * @return false if failed to add such store, otherwise, true
+     * @return null if failed to add such store, otherwise, the id of the store
      */
-    boolean addStore(String storeName);
+    Long addStore(String storeName);
 
     /**
      * @param storeName
@@ -26,31 +24,43 @@ public interface StoreService {
     Store getStoreByName(String storeName);
 
     /**
+     * @param storeId
+     * @return null if the store with the given id does not exist, otherwise, a Store instance
+     */
+    Store getStoreById(Long storeId);
+
+    /**
      * @param storeName
      * @return whether the store with the given name exists
      */
     boolean storeExists(String storeName);
 
     /**
-     * @param storeName
-     * @return whether deletion succeed
+     * @param storeId
+     * @return whether the store with the given id exists
      */
-    boolean deleteStore(String storeName);
+    boolean storeExists(Long storeId);
 
     /**
-     * @param storeName
+     * @param storeId
+     * @return whether deletion succeed
+     */
+    boolean deleteStore(Long storeId);
+
+    /**
+     * @param storeId
      * @param goodsName
      * @param price
      * @param quantity
      * @return null if failed to add such store, otherwise, the id of the goods
      */
-    Long addGoods(String storeName, String goodsName, BigDecimal price, Integer quantity);
+    Long addGoods(Long storeId, String goodsName, BigDecimal price, Integer quantity);
 
     /**
-     * @param storeName
+     * @param storeId
      * @return null if such store does not exist, otherwise goods in the store with the given name
      */
-    List<Goods> listAllGoods(String storeName);
+    List<Goods> listAllGoods(Long storeId);
 
     /**
      * @param goodsId
@@ -59,12 +69,12 @@ public interface StoreService {
     Goods getGoodsById(Long goodsId);
 
     /**
-     * @param storeName
+     * @param storeId
      * @param goodsName
      * @return null if such goods do not exist, otherwise, the goods with the given name and in the store
-     * with the given name
+     * with the given id
      */
-    Goods getGoodsByName(String storeName, String goodsName);
+    Goods getGoodsByName(Long storeId, String goodsName);
 
     /**
      * @param goodsId

@@ -1,6 +1,5 @@
 package com.sustech.campus.controller;
 
-import com.sustech.campus.entity.Bus;
 import com.sustech.campus.entity.Station;
 import com.sustech.campus.service.StationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class StationController {
 
     @GetMapping("/{name}")
     public ResponseEntity<Station> getStation(@PathVariable String name) {
-        Station station = stationService.getStation(name);
+        Station station = stationService.getStationByName(name);
         if (station != null) {
             return ResponseEntity.ok(station);
         } else {
@@ -39,17 +38,17 @@ public class StationController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addStation(@RequestBody Station station) {
-        boolean success = stationService.addStation(station.getName(), station.getLatitude(), station.getLongitude());
-        if (success) {
+        Long stationId = stationService.addStation(station.getName(), station.getLatitude(), station.getLongitude());
+        if (stationId != null) {
             return ResponseEntity.ok("Station added successfully.");
         } else {
             return ResponseEntity.badRequest().body("Station already exists.");
         }
     }
 
-    @DeleteMapping("/delete/{name}")
-    public ResponseEntity<String> deleteStation(@PathVariable String name) {
-        boolean success = stationService.deleteStation(name);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteStation(@PathVariable long id) {
+        boolean success = stationService.deleteStation(id);
         if (success) {
             return ResponseEntity.ok("Station deleted successfully.");
         } else {
@@ -57,9 +56,9 @@ public class StationController {
         }
     }
 
-    @PutMapping("/updateLocation/{name}")
-    public ResponseEntity<String> updateStationLocation(@PathVariable String name, @RequestParam double latitude, @RequestParam double longitude) {
-        boolean success = stationService.changeStationLocation(name, latitude, longitude);
+    @PutMapping("/updateLocation/{id}")
+    public ResponseEntity<String> updateStationLocation(@PathVariable long id, @RequestParam double latitude, @RequestParam double longitude) {
+        boolean success = stationService.changeStationLocation(id, latitude, longitude);
         if (success) {
             return ResponseEntity.ok("Station location updated successfully.");
         } else {
@@ -67,9 +66,9 @@ public class StationController {
         }
     }
 
-    @GetMapping("/listBusLines/{name}")
-    public ResponseEntity<List<Bus>> listAllBusLines(@PathVariable String name) {
-        List<Bus> buses = stationService.listAllBusLines(name);
+    @GetMapping("/listBusLines/{id}")
+    public ResponseEntity<List<Long>> listAllBusLines(@PathVariable long id) {
+        List<Long> buses = stationService.listAllBusIds(id);
         if (buses != null) {
             return ResponseEntity.ok(buses);
         } else {

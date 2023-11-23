@@ -37,6 +37,10 @@ public class StationServiceTest {
         this.stations = new ArrayList<>();
         this.buses = new ArrayList<>();
         this.routes = new ArrayList<>();
+    }
+
+    @BeforeEach
+    void insert() {
         int numBuses = 4;
         int numStations = 10;
         int numStationPerLine = 5;
@@ -45,49 +49,46 @@ public class StationServiceTest {
             station.setName("test_station_" + i);
             station.setLatitude(i);
             station.setLongitude(-i);
+            Long stationId = this.stationService.addStation(
+                    station.getName(),
+                    station.getLatitude(),
+                    station.getLongitude()
+            );
+            assertNotNull(stationId);
+            station.setId(stationId);
             this.stations.add(station);
         }
         for (int i = 0; i < numBuses; ++i) {
             Bus bus = new Bus();
             bus.setName("test_bus_" + i);
+            Long busId = this.busService.addBusLine(bus.getName());
+            bus.setId(busId);
             this.buses.add(bus);
+
             ArrayList<Route> arrayList = new ArrayList<>();
             for (int j = 0; j < numStationPerLine; ++j) {
                 int stationId = new Random().nextInt(numStations);
                 Route route = new Route();
-                route.setBus(bus.getName());
-                route.setStation(this.stations.get(stationId).getName());
+                route.setBusId(bus.getId());
+                route.setStationId(this.stations.get(stationId).getId());
                 route.setStopOrder(j);
                 arrayList.add(route);
             }
             this.routes.add(arrayList);
-        }
-    }
-
-    @BeforeEach
-    void insert() {
-        for (Station station : this.stations) {
-            assertTrue(this.stationService.addStation(
-                    station.getName(),
-                    station.getLatitude(),
-                    station.getLongitude()
-            ));
-        }
-        for (int i = 0; i < this.buses.size(); ++i) {
-            assertTrue(this.busService.addBusLine(
-                    this.buses.get(i).getName(),
-                    this.routes.get(i).stream().map(Route::getStation).toList()
-            ));
+            this.busService.changeBusStations(
+                    this.buses.get(i).getId(),
+                    this.routes.get(i).stream().map(Route::getStationId).toList()
+            );
         }
     }
 
     @AfterEach
     void clean() {
         for (Bus bus : this.buses) {
-            assertTrue(this.busService.deleteBusLine(bus.getName()));
+            this.busService.deleteBusLine(bus.getId());
         }
         for (Station station : this.stations) {
-            assertTrue(this.stationService.deleteStation(station.getName()));
+            assertTrue(this.stationService.deleteStation(station.getId()));
         }
     }
 
@@ -95,22 +96,22 @@ public class StationServiceTest {
     @Order(1)
     void testStationExists() {
         for (Station station : this.stations) {
-            assertTrue(this.stationService.stationExists(station.getName()));
+            assertTrue(this.stationService.stationExists(station.getId()));
         }
     }
 
     @Test
     @Order(2)
-    void testListAllBusLines() {
+    void testListAllBusIds() {
         for (Station station : this.stations) {
             assertIterableEquals(
-                    this.stationService.listAllBusLines(station.getName())
-                            .stream().sorted(Comparator.comparing(Bus::getName)).toList(),
+                    this.stationService.listAllBusIds(station.getId())
+                            .stream().sorted().toList(),
                     Stream.iterate(0, e -> e < this.buses.size(), e -> e + 1)
                             .filter(
-                                    e1 -> this.routes.get(e1).stream().map(Route::getStation)
-                                            .anyMatch(e2 -> e2.equals(station.getName()))
-                            ).map(e -> this.buses.get(e)).toList()
+                                    e1 -> this.routes.get(e1).stream().map(Route::getStationId)
+                                            .anyMatch(e2 -> e2.equals(station.getId()))
+                            ).map(e -> this.buses.get(e).getId()).distinct().sorted().toList()
             );
         }
     }
@@ -126,10 +127,10 @@ public class StationServiceTest {
 
     @Test
     @Order(4)
-    void testGetStations() {
+    void testGetStationByName() {
         for (Station station : this.stations) {
             assertEquals(
-                    this.stationService.getStation(station.getName()),
+                    this.stationService.getStationByName(station.getName()),
                     station
             );
         }
@@ -137,20 +138,47 @@ public class StationServiceTest {
 
     @Test
     @Order(5)
+    void testGetStationById() {
+        for (Station station : this.stations) {
+            assertEquals(
+                    this.stationService.getStationById(station.getId()),
+                    station
+            );
+        }
+    }
+
+    @Test
+    @Order(6)
     void testChangeStationLocation() {
         for (Station station : this.stations) {
             assertTrue(this.stationService.changeStationLocation(
-                    station.getName(),
+                    station.getId(),
                     station.getLatitude() + 1,
                     station.getLongitude() + 1
             ));
             assertEquals(
-                    this.stationService.getStation(station.getName()).getLatitude(),
+                    this.stationService.getStationById(station.getId()).getLatitude(),
                     station.getLatitude() + 1
             );
             assertEquals(
-                    this.stationService.getStation(station.getName()).getLongitude(),
+                    this.stationService.getStationById(station.getId()).getLongitude(),
                     station.getLongitude() + 1
+            );
+        }
+    }
+
+    @Test
+    @Order(7)
+    void testChangeStationName() {
+        for (Station station : this.stations) {
+            assertTrue(this.stationService.changeStationName(
+                    station.getId(),
+                    station.getName() + "_new"
+            ));
+            station.setName(station.getName() + "_new");
+            assertEquals(
+                    this.stationService.getStationById(station.getId()),
+                    station
             );
         }
     }

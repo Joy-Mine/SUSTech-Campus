@@ -6,10 +6,20 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 @TableName("station")
 public class Station {
-    @TableId(type = IdType.INPUT)
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
+
     private String name;
 
     private double latitude, longitude;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -41,7 +51,8 @@ public class Station {
             return false;
         }
         return this == other
-                || this.name.equals(other.name)
+                || this.id.equals(other.id)
+                && this.name.equals(other.name)
                 && this.latitude == other.latitude
                 && this.longitude == other.longitude;
     }
@@ -49,9 +60,10 @@ public class Station {
     @Override
     public String toString() {
         return "Station{" +
-                "name='" + this.name + "'" +
-                ", latitude=" + this.latitude +
-                ", longitude=" + this.longitude +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 '}';
     }
 }

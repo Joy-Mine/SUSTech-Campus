@@ -7,11 +7,24 @@ import com.sustech.campus.enums.UserType;
 
 @TableName("user")
 public class User {
-    @TableId(type = IdType.INPUT)
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
+
     private String name;
+
     private String password;
+
     private UserType type;
+
     private String token;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -51,7 +64,8 @@ public class User {
             return false;
         }
         return this == other
-                || this.name.equals(other.name)
+                || this.id.equals(other.id)
+                && this.name.equals(other.name)
                 && this.password.equals(other.password)
                 && this.type == other.type
                 && this.token.equals(other.token);
@@ -60,10 +74,11 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "name='" + this.name + "'" +
-                ", password='" + this.password + "'" +
-                ", type='" + this.type + "'" +
-                ", token='" + this.token + "'" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", type=" + type +
+                ", token='" + token + '\'' +
                 '}';
     }
 }

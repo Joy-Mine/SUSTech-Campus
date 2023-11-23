@@ -60,13 +60,14 @@ public class CommentServiceTest {
             building.setLatitude(0);
             building.setLongitude(0);
             this.buildings.add(building);
-            this.buildingService.addBuilding(
+            Long buildingId = this.buildingService.addBuilding(
                     building.getName(),
                     building.getDescription(),
                     building.getDetails(),
                     building.getLatitude(),
                     building.getLongitude()
             );
+            building.setId(buildingId);
         }
         for (int i = 0; i < numUsers; ++i) {
             User user = new User();
@@ -75,23 +76,26 @@ public class CommentServiceTest {
             user.setType(UserType.USER);
             user.setToken("");
             this.users.add(user);
-            String token = this.userService.registerUser(
+            Long userId = this.userService.registerUser(
                     user.getName(),
                     user.getPassword(),
                     user.getType()
             );
-            user.setToken(token);
+            user.setId(userId);
+            user.setToken(this.userService.getUserById(userId).getToken());
         }
         for (int i = 0; i < numComments; ++i) {
             Comment comment = new Comment();
-            comment.setBuilding("test_building_" + new Random().nextInt(numBuildings));
-            comment.setCommenter("test_user_" + new Random().nextInt(numUsers));
+            Building building = this.buildings.get(new Random().nextInt(this.buildings.size()));
+            comment.setBuildingId(building.getId());
+            User user = this.users.get(new Random().nextInt(this.users.size()));
+            comment.setCommenterId(user.getId());
             comment.setStatus(CommentStatus.WAITING);
             comment.setContent("");
             this.comments.add(comment);
             Long commentId = this.commentService.addComment(
-                    comment.getBuilding(),
-                    comment.getCommenter(),
+                    comment.getBuildingId(),
+                    comment.getCommenterId(),
                     comment.getContent()
             );
             assertNotNull(commentId);
@@ -121,10 +125,10 @@ public class CommentServiceTest {
             assertTrue(this.commentService.deleteComment(comment.getId()));
         }
         for (Building building : this.buildings) {
-            this.buildingService.deleteBuilding(building.getName());
+            this.buildingService.deleteBuilding(building.getId());
         }
         for (User user : this.users) {
-            this.userService.deleteUser(user.getName());
+            this.userService.deleteUser(user.getId());
         }
     }
 
@@ -187,25 +191,25 @@ public class CommentServiceTest {
     @Test
     @Order(6)
     void testGetComments() {
-        List<String> buildingNames = new ArrayList<>(this.buildings.stream().map(Building::getName).toList());
-        List<String> commenterNames = new ArrayList<>(this.users.stream().map(User::getName).toList());
+        List<Long> buildingIds = new ArrayList<>(this.buildings.stream().map(Building::getId).toList());
+        List<Long> commenterIds = new ArrayList<>(this.users.stream().map(User::getId).toList());
         List<CommentStatus> commentStatuses = new ArrayList<>(List.of(
                 CommentStatus.WAITING,
                 CommentStatus.APPROVED,
                 CommentStatus.REJECTED
         ));
-        buildingNames.add(null);
-        commenterNames.add(null);
+        buildingIds.add(null);
+        commenterIds.add(null);
         commentStatuses.add(null);
-        for (String buildingName : buildingNames) {
-            for (String commenterName : commenterNames) {
+        for (Long buildingId : buildingIds) {
+            for (Long commenterId : commenterIds) {
                 for (CommentStatus commentStatus : commentStatuses) {
                     assertIterableEquals(
-                            this.commentService.getComments(buildingName, commenterName, commentStatus).stream()
+                            this.commentService.getComments(buildingId, commenterId, commentStatus).stream()
                                     .sorted(Comparator.comparing(Comment::getId)).toList(),
                             this.comments.stream()
-                                    .filter(e -> buildingName == null || e.getBuilding().equals(buildingName))
-                                    .filter(e -> commenterName == null || e.getCommenter().equals(commenterName))
+                                    .filter(e -> buildingId == null || e.getBuildingId().equals(buildingId))
+                                    .filter(e -> commenterId == null || e.getCommenterId().equals(commenterId))
                                     .filter(e -> commentStatus == null || e.getStatus() == commentStatus)
                                     .sorted(Comparator.comparing(Comment::getId)).toList()
                     );

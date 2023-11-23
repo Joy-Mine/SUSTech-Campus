@@ -1,6 +1,7 @@
 package com.sustech.campus.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.sustech.campus.enums.CommentStatus;
@@ -10,7 +11,13 @@ public class Comment {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
-    private String building, commenter, content;
+    private String content;
+
+    @TableField(value = "commenterId")
+    private Long commenterId;
+
+    @TableField(value = "buildingId")
+    private Long buildingId;
 
     private CommentStatus status;
 
@@ -22,20 +29,20 @@ public class Comment {
         this.id = id;
     }
 
-    public String getBuilding() {
-        return building;
+    public Long getBuildingId() {
+        return buildingId;
     }
 
-    public void setBuilding(String building) {
-        this.building = building;
+    public void setBuildingId(Long buildingId) {
+        this.buildingId = buildingId;
     }
 
-    public String getCommenter() {
-        return commenter;
+    public Long getCommenterId() {
+        return commenterId;
     }
 
-    public void setCommenter(String commenter) {
-        this.commenter = commenter;
+    public void setCommenterId(Long commenterId) {
+        this.commenterId = commenterId;
     }
 
     public String getContent() {
@@ -58,9 +65,9 @@ public class Comment {
     public String toString() {
         return "Comment{" +
                 "id=" + id +
-                ", building='" + building + "'" +
-                ", commenter='" + commenter + "'" +
-                ", content='" + content + "'" +
+                ", content='" + content + '\'' +
+                ", commenterId=" + commenterId +
+                ", buildingId=" + buildingId +
                 ", status=" + status +
                 '}';
     }
@@ -72,8 +79,8 @@ public class Comment {
         }
         return this == other
                 || this.id.equals(other.id)
-                && this.building.equals(other.building)
-                && this.commenter.equals(other.commenter)
+                && this.buildingId.equals(other.buildingId)
+                && this.commenterId.equals(other.commenterId)
                 && this.content.equals(other.content)
                 && this.status == other.status;
     }

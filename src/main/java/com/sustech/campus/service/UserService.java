@@ -11,10 +11,17 @@ public interface UserService {
     User getUserByName(String username);
 
     /**
-     * @param username
+     *
+     * @param userId
+     * @return null if the user does not exist, otherwise a User instance
+     */
+    User getUserById(Long userId);
+
+    /**
+     * @param userId
      * @return null if the user does not exist, otherwise the type of the user
      */
-    UserType getUserType(String username);
+    UserType getUserType(Long userId);
 
     /**
      * @param username
@@ -23,37 +30,50 @@ public interface UserService {
     boolean userExists(String username);
 
     /**
+     * @param userId
+     * @return whether the user with the given id exists
+     */
+    boolean userExists(Long userId);
+
+    /**
+     * @param userId
+     * @param newName
+     * @return false if failed to change the name of the user
+     */
+    boolean changeUserName(Long userId, String newName);
+
+    /**
      * @param username
      * @param password
      * @param type
-     * @return null if registration failed, otherwise, the token of the user
+     * @return null if registration failed, otherwise, the id of the user
      */
-    String registerUser(String username, String password, UserType type);
+    Long registerUser(String username, String password, UserType type);
 
     /**
-     * @param username
+     * @param userId
      * @param newType
      * @return false if failed to change the type of the user, otherwise true
      */
-    boolean changeUserType(String username, UserType newType);
+    boolean changeUserType(Long userId, UserType newType);
 
     /**
-     * @param username
+     * @param userId
      * @return whether deletion succeed
      */
-    boolean deleteUser(String username);
+    boolean deleteUser(Long userId);
 
     /**
-     * @param username
+     * @param userId
      * @param token
      * @return whether the given token is the same as the token in the database
      */
-    boolean checkToken(String username, String token);
+    boolean checkToken(Long userId, String token);
 
     /**
      * change the token of the user with the given username
-     * @param username
+     * @param userId
      * @return null if failed to change the token, otherwise, the new token
      */
-    String changeToken(String username);
+    String changeToken(Long userId);
 }

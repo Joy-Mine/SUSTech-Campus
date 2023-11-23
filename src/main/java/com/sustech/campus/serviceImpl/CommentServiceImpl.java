@@ -7,6 +7,7 @@ import com.sustech.campus.enums.CommentStatus;
 import com.sustech.campus.mapper.BuildingMapper;
 import com.sustech.campus.mapper.CommentMapper;
 import com.sustech.campus.mapper.CommentPhotoMapper;
+import com.sustech.campus.mapper.UserMapper;
 import com.sustech.campus.service.CommentService;
 import org.springframework.stereotype.Service;
 
@@ -14,27 +15,30 @@ import java.util.List;
 
 @Service
 public class CommentServiceImpl implements CommentService {
+    private UserMapper userMapper;
+
     private BuildingMapper buildingMapper;
 
     private CommentMapper commentMapper;
 
     private CommentPhotoMapper commentPhotoMapper;
 
-    public CommentServiceImpl(BuildingMapper buildingMapper, CommentMapper commentMapper,
-                              CommentPhotoMapper commentPhotoMapper) {
+    public CommentServiceImpl(UserMapper userMapper, BuildingMapper buildingMapper,
+                              CommentMapper commentMapper, CommentPhotoMapper commentPhotoMapper) {
+        this.userMapper = userMapper;
         this.buildingMapper = buildingMapper;
         this.commentMapper = commentMapper;
         this.commentPhotoMapper = commentPhotoMapper;
     }
 
     @Override
-    public Long addComment(String buildingName, String commenter, String content) {
-        if (this.buildingMapper.selectById(buildingName) == null) {
+    public Long addComment(Long buildingId, Long commenterId, String content) {
+        if (this.buildingMapper.selectById(buildingId) == null || this.userMapper.selectById(commenterId) == null) {
             return null;
         }
         Comment comment = new Comment();
-        comment.setBuilding(buildingName);
-        comment.setCommenter(commenter);
+        comment.setBuildingId(buildingId);
+        comment.setCommenterId(commenterId);
         comment.setContent(content);
         comment.setStatus(CommentStatus.WAITING);
         this.commentMapper.insert(comment);
@@ -95,17 +99,17 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> getComments(String buildingName, String commenter, CommentStatus status) {
+    public List<Comment> getComments(Long buildingId, Long commenterId, CommentStatus status) {
         QueryWrapper<Comment> wrapper;
-        if (buildingName == null && commenter == null && status == null) {
+        if (buildingId == null && commenterId == null && status == null) {
             wrapper = null;
         } else {
             wrapper = new QueryWrapper<>();
-            if (buildingName != null) {
-                wrapper.eq("building", buildingName);
+            if (buildingId != null) {
+                wrapper.eq("buildingId", buildingId);
             }
-            if (commenter != null) {
-                wrapper.eq("commenter", commenter);
+            if (commenterId != null) {
+                wrapper.eq("commenterId", commenterId);
             }
             if (status != null) {
                 wrapper.eq("status", status);

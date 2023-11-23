@@ -5,27 +5,29 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 @TableName("route")
 public class Route {
-    private String bus;
+    @TableField(value = "busId")
+    private Long busId;
 
-    private String station;
+    @TableField(value = "stationId")
+    private Long stationId;
 
     @TableField(value = "stopOrder")
     private int stopOrder;
 
-    public String getBus() {
-        return bus;
+    public Long getBusId() {
+        return busId;
     }
 
-    public void setBus(String bus) {
-        this.bus = bus;
+    public void setBusId(Long busId) {
+        this.busId = busId;
     }
 
-    public String getStation() {
-        return station;
+    public Long getStationId() {
+        return stationId;
     }
 
-    public void setStation(String station) {
-        this.station = station;
+    public void setStationId(Long stationId) {
+        this.stationId = stationId;
     }
 
     public int getStopOrder() {
