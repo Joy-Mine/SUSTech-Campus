@@ -22,18 +22,18 @@ public class BusController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addBusLine(@RequestBody Bus bus, @RequestBody List<String> stationNames) {
-        boolean success = busService.addBusLine(bus.getName(), stationNames);
-        if (success) {
+    public ResponseEntity<String> addBusLine(@RequestBody Bus bus) {
+        Long busId = busService.addBusLine(bus.getName());
+        if (busId != null) {
             return ResponseEntity.ok("Bus line added successfully.");
         } else {
-            return ResponseEntity.badRequest().body("Bus line already exists or station not found.");
+            return ResponseEntity.badRequest().body("Bus line already exists.");
         }
     }
 
-    @DeleteMapping("/delete/{name}")
-    public ResponseEntity<String> deleteBusLine(@PathVariable String name) {
-        boolean success = busService.deleteBusLine(name);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteBusLine(@PathVariable Long id) {
+        boolean success = busService.deleteBusLine(id);
         if (success) {
             return ResponseEntity.ok("Bus line deleted successfully.");
         } else {
@@ -47,9 +47,9 @@ public class BusController {
         return ResponseEntity.ok(buses);
     }
 
-    @GetMapping("/stations/{name}")
-    public ResponseEntity<List<Station>> getStations(@PathVariable String name) {
-        List<Station> stations = busService.getStations(name);
+    @GetMapping("/stations/{id}")
+    public ResponseEntity<List<Station>> getStations(@PathVariable Long id) {
+        List<Station> stations = busService.getStations(id);
         if (stations != null && !stations.isEmpty()) {
             return ResponseEntity.ok(stations);
         } else {
@@ -57,9 +57,9 @@ public class BusController {
         }
     }
 
-    @PutMapping("/updateStations/{name}")
-    public ResponseEntity<String> setStations(@PathVariable String name, @RequestBody List<String> stationNames) {
-        boolean success = busService.setStations(name, stationNames);
+    @PutMapping("/updateStations/{id}")
+    public ResponseEntity<String> setStations(@PathVariable Long id, @RequestBody List<Long> stationIds) {
+        boolean success = busService.changeBusStations(id, stationIds);
         if (success) {
             return ResponseEntity.ok("Bus line stations updated successfully.");
         } else {

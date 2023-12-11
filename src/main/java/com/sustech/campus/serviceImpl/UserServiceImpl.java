@@ -35,19 +35,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByName(String username) {
-        return this.userMapper.selectById(username);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("name", username);
+        return this.userMapper.selectOne(wrapper);
     }
 
     @Override
-    public User getUserByToken(String token) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("token", token);
-        return this.userMapper.selectOne(queryWrapper);
+    public User getUserById(Long userId) {
+        return this.userMapper.selectById(userId);
     }
 
     @Override
-    public UserType getUserType(String username) {
-        User user = this.getUserByName(username);
+    public UserType getUserType(Long userId) {
+        User user = this.getUserById(userId);
         if (user == null) {
             return null;
         }
@@ -56,11 +56,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean userExists(String username) {
-        return this.userMapper.selectById(username) != null;
+        return this.getUserByName(username) != null;
     }
 
     @Override
-    public String registerUser(String username, String password, UserType type) {
+    public boolean userExists(Long userId) {
+        return this.getUserById(userId) != null;
+    }
+
+    @Override
+    public boolean changeUserName(Long userId, String newName) {
+        User user = this.getUserById(userId);
+        if (user == null || this.userExists(newName)) {
+            return false;
+        }
+        user.setName(newName);
+        this.userMapper.updateById(user);
+        return true;
+    }
+
+    @Override
+    public Long registerUser(String username, String password, UserType type) {
         if (this.userExists(username)) {
             return null;
         }
@@ -70,12 +86,12 @@ public class UserServiceImpl implements UserService {
         user.setType(type);
         user.setToken(this.generateToken(null));
         this.userMapper.insert(user);
-        return user.getToken();
+        return user.getId();
     }
 
     @Override
-    public boolean changeUserType(String username, UserType newType) {
-        User user = this.getUserByName(username);
+    public boolean changeUserType(Long userId, UserType newType) {
+        User user = this.getUserById(userId);
         if (user == null) {
             return false;
         }
@@ -85,23 +101,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(String username) {
-        if (!this.userExists(username)) {
+    public boolean deleteUser(Long userId) {
+        if (!this.userExists(userId)) {
             return false;
         }
-        this.userMapper.deleteById(username);
+        this.userMapper.deleteById(userId);
         return true;
     }
 
     @Override
-    public boolean checkToken(String username, String token) {
-        User user = this.getUserByName(username);
+    public boolean checkToken(Long userId, String token) {
+        User user = this.getUserById(userId);
         return user != null && user.getToken().equals(token);
     }
 
     @Override
-    public String changeToken(String username) {
-        User user = this.getUserByName(username);
+    public String changeToken(Long userId) {
+        User user = this.getUserById(userId);
         if (user == null) {
             return null;
         }

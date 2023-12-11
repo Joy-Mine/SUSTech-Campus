@@ -14,66 +14,74 @@ drop table if exists `user`;
 
 create table `user`
 (
+    id       bigint       not null,
     name     varchar(255) not null,
     password varchar(255) not null,
     token    varchar(255) not null,
     type     integer      not null,
-    primary key (name)
+    primary key (id),
+    unique (name)
 );
 
 create table building
 (
+    id          bigint       not null,
     name        varchar(255) not null,
     description text         not null,
     details     text         not null,
     latitude    double       not null,
     longitude   double       not null,
-    primary key (name)
+    primary key (id),
+    unique (name)
 );
 
 create table building_photo
 (
-    id       bigint       not null,
-    building varchar(255) not null,
-    path     text         not null,
+    id         bigint not null,
+    buildingId bigint not null,
+    path       text   not null,
     primary key (id),
-    constraint foreign key (building) references building (name)
+    constraint foreign key (buildingId) references building (id)
 );
 
 create table bus
 (
+    id   bigint       not null,
     name varchar(255) not null,
-    primary key (name)
+    primary key (id),
+    unique (name)
 );
 
 create table station
 (
+    id        bigint       not null,
     name      varchar(255) not null,
     latitude  double       not null,
     longitude double       not null,
-    primary key (name)
+    primary key (id),
+    unique(name)
 );
 
 create table route
 (
-    bus       varchar(255) not null,
-    station   varchar(255) not null,
-    stopOrder int          not null,
-    primary key (bus, stopOrder),
-    constraint foreign key (bus) references bus (name),
-    constraint foreign key (station) references station (name)
+    busId     bigint not null,
+    stationId bigint not null,
+    stopOrder int    not null,
+    primary key (busId, stopOrder),
+    constraint foreign key (busId) references bus (id),
+    constraint foreign key (stationId) references station (id)
 );
 
 create table comment
 (
-    id        bigint       not null,
-    building  varchar(255) not null,
-    commenter varchar(255) not null,
-    content   text         not null,
-    status    int          not null,
+    id          bigint not null,
+    buildingId  bigint not null,
+    commenterId bigint not null,
+    content     text   not null,
+    status      int    not null,
     primary key (id),
-    constraint foreign key (building) references building (name),
-    constraint foreign key (commenter) references `user` (name)
+    constraint foreign key (buildingId) references building (id),
+    constraint foreign key (commenterId) references `user` (id)
 );
 
 create table comment_photo
@@ -87,19 +95,22 @@ create table comment_photo
 
 create table store
 (
+    id   bigint       not null,
     name varchar(255) not null,
-    primary key (name)
+    primary key (id),
+    unique (name)
 );
 
 create table goods
 (
     id       bigint        not null,
     name     varchar(255)  not null,
-    store    varchar(255)  not null,
+    storeId  bigint        not null,
     price    numeric(8, 2) not null,
     quantity int           not null,
     primary key (id),
-    constraint foreign key (store) references store (name)
+    constraint foreign key (storeId) references store (id),
+    unique (storeId, name)
 );
 
 create table goods_photo
@@ -114,7 +125,7 @@ create table goods_photo
 create table `order`
 (
     id        bigint       not null,
-    status    varchar(255) not null,
+    status    int          not null,
     purchaser varchar(255) not null,
     time      time         not null,
     primary key (id),

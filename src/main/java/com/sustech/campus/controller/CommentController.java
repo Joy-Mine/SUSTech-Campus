@@ -1,8 +1,6 @@
 package com.sustech.campus.controller;
 
 import com.sustech.campus.entity.Comment;
-import com.sustech.campus.entity.CommentPhoto;
-import com.sustech.campus.enums.CommentStatus;
 import com.sustech.campus.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +22,7 @@ public class CommentController {
 
     @PostMapping("/add")
     public ResponseEntity<Long> addComment(@RequestBody Comment comment) {
-        Long commentId = commentService.addComment(comment.getBuilding(), comment.getCommenter(), comment.getContent());
+        Long commentId = commentService.addComment(comment.getBuildingId(), comment.getCommenterId(), comment.getContent());
         if (commentId != null) {
             return ResponseEntity.ok(commentId);
         } else {
@@ -62,9 +60,9 @@ public class CommentController {
         }
     }
 
-    @GetMapping("/building/{buildingName}")
-    public ResponseEntity<List<Comment>> getCommentsByBuilding(@PathVariable String buildingName) {
-        List<Comment> comments = commentService.getComments(buildingName, null, null);
+    @GetMapping("/building/{buildingId}")
+    public ResponseEntity<List<Comment>> getCommentsByBuilding(@PathVariable Long buildingId) {
+        List<Comment> comments = commentService.getComments(buildingId, null, null);
         if (!comments.isEmpty()) {
             return ResponseEntity.ok(comments);
         } else {

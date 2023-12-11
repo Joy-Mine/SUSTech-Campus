@@ -31,37 +31,25 @@ public class BusServiceImpl implements BusService {
 
 
     @Override
-    public boolean addBusLine(String name, List<String> stationNames) {
-        if (this.busLineExists(name)) {
-            return false;
+    public Long addBusLine(String busName) {
+        if (this.busLineExists(busName)) {
+            return null;
         }
-        for (String stationName : stationNames) {
-            if (this.stationMapper.selectById(stationName) == null) {
-                return false;
-            }
-        }
-        Bus busLine = new Bus();
-        busLine.setName(name);
-        this.busMapper.insert(busLine);
-        for (int i = 0; i < stationNames.size(); ++i) {
-            Route route = new Route();
-            route.setBus(name);
-            route.setStation(stationNames.get(i));
-            route.setStopOrder(i);
-            this.routeMapper.insert(route);
-        }
-        return true;
+        Bus bus = new Bus();
+        bus.setName(busName);
+        this.busMapper.insert(bus);
+        return bus.getId();
     }
 
     @Override
-    public boolean deleteBusLine(String name) {
-        if (!this.busLineExists(name)) {
+    public boolean deleteBusLine(Long busId) {
+        if (!this.busLineExists(busId)) {
             return false;
         }
         QueryWrapper<Route> wrapper = new QueryWrapper<>();
-        wrapper.eq("bus", name);
+        wrapper.eq("busId", busId);
         this.routeMapper.delete(wrapper);
-        this.busMapper.deleteById(name);
+        this.busMapper.deleteById(busId);
         return true;
     }
 
@@ -71,51 +59,58 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
-    public boolean busLineExists(String name) {
-        return this.busMapper.selectById(name) != null;
+    public boolean busLineExists(Long busId) {
+        return this.busMapper.selectById(busId) != null;
     }
 
     @Override
-    public List<String> getStationNames(String name) {
-        if (!this.busLineExists(name)) {
+    public boolean busLineExists(String busName) {
+        QueryWrapper<Bus> wrapper = new QueryWrapper<>();
+        wrapper.eq("name", busName);
+        return this.busMapper.selectOne(wrapper) != null;
+    }
+
+    @Override
+    public List<Long> getStationIds(Long busId) {
+        if (!this.busLineExists(busId)) {
             return null;
         }
         QueryWrapper<Route> wrapper = new QueryWrapper<>();
-        wrapper.eq("bus", name);
+        wrapper.eq("busId", busId);
         return this.routeMapper.selectList(wrapper).stream().sorted(Comparator.comparing(Route::getStopOrder))
-                .map(Route::getStation).toList();
+                .map(Route::getStationId).toList();
     }
 
     @Override
-    public List<Station> getStations(String name) {
-        List<String> stationNames = this.getStationNames(name);
-        if (stationNames == null) {
+    public List<Station> getStations(Long busId) {
+        List<Long> stationIds = this.getStationIds(busId);
+        if (stationIds == null) {
             return null;
         }
         List<Station> stations = new ArrayList<>();
-        for (String stationName : stationNames) {
-            stations.add(this.stationMapper.selectById(stationName));
+        for (Long stationId : stationIds) {
+            stations.add(this.stationMapper.selectById(stationId));
         }
         return stations;
     }
 
     @Override
-    public boolean setStations(String name, List<String> stationNames) {
-        if (!this.busLineExists(name)) {
+    public boolean changeBusStations(Long busId, List<Long> stationIds) {
+        if (!this.busLineExists(busId)) {
             return false;
         }
-        for (String stationName : stationNames) {
-            if (this.stationMapper.selectById(stationName) == null) {
+        for (Long stationId : stationIds) {
+            if (this.stationMapper.selectById(stationId) == null) {
                 return false;
             }
         }
         QueryWrapper<Route> wrapper = new QueryWrapper<>();
-        wrapper.eq("bus", name);
+        wrapper.eq("busId", busId);
         this.routeMapper.delete(wrapper);
-        for (int i = 0; i < stationNames.size(); ++i) {
+        for (int i = 0; i < stationIds.size(); ++i) {
             Route route = new Route();
-            route.setBus(name);
-            route.setStation(stationNames.get(i));
+            route.setBusId(busId);
+            route.setStationId(stationIds.get(i));
             route.setStopOrder(i);
             this.routeMapper.insert(route);
         }

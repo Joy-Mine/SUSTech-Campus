@@ -1,6 +1,7 @@
 package com.sustech.campus.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -9,7 +10,8 @@ public class BuildingPhoto {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
-    private String building;
+    @TableField(value = "buildingId")
+    private Long buildingId;
 
     private String path;
 
@@ -21,12 +23,12 @@ public class BuildingPhoto {
         this.id = id;
     }
 
-    public String getBuilding() {
-        return building;
+    public Long getBuildingId() {
+        return buildingId;
     }
 
-    public void setBuilding(String building) {
-        this.building = building;
+    public void setBuildingId(Long buildingId) {
+        this.buildingId = buildingId;
     }
 
     public String getPath() {
@@ -44,7 +46,7 @@ public class BuildingPhoto {
         }
         return obj == this
                 || this.id.equals(other.id)
-                && this.building.equals(other.building)
+                && this.buildingId.equals(other.buildingId)
                 && this.path.equals(other.path);
     }
 
@@ -52,8 +54,8 @@ public class BuildingPhoto {
     public String toString() {
         return "BuildingPhoto{" +
                 "id=" + id +
-                ", building='" + building + "'" +
-                ", path='" + path + "'" +
+                ", buildingId=" + buildingId +
+                ", path='" + path + '\'' +
                 '}';
     }
 }

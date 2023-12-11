@@ -6,8 +6,18 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 @TableName("bus")
 public class Bus {
-    @TableId(type = IdType.INPUT)
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
+
     private String name;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -23,13 +33,15 @@ public class Bus {
             return false;
         }
         return this == other
-                || this.name.equals(other.name);
+                || this.id.equals(other.id)
+                && this.name.equals(other.name);
     }
 
     @Override
     public String toString() {
         return "Bus{" +
-                "name='" + this.name + "'" +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

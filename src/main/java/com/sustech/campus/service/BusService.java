@@ -7,17 +7,16 @@ import java.util.List;
 
 public interface BusService {
     /**
-     * @param name         name of the bus line
-     * @param stationNames names of the stations on the line, arranged in the order of stopping
-     * @return false if failed to add such line, otherwise true
+     * @param busName
+     * @return null if failed to add such line, otherwise the id of the bus line
      */
-    boolean addBusLine(String name, List<String> stationNames);
+    Long addBusLine(String busName);
 
     /**
-     * @param name name of the bus line
+     * @param busId
      * @return whether deletion succeed
      */
-    boolean deleteBusLine(String name);
+    boolean deleteBusLine(Long busId);
 
     /**
      * @return all bus lines
@@ -25,30 +24,36 @@ public interface BusService {
     List<Bus> listAllBusLines();
 
     /**
-     * @param name name of the bus line
+     * @param busId
+     * @return whether the bus line with the given id exists
+     */
+    boolean busLineExists(Long busId);
+
+    /**
+     * @param busName
      * @return whether the bus line with the given name exists
      */
-    boolean busLineExists(String name);
+    boolean busLineExists(String busName);
 
     /**
-     * @param name name of the bus line
-     * @return null if the bus line with the given name does not exist, otherwise, a List of the name of stations
+     * @param busId
+     * @return null if the bus line with the given id does not exist, otherwise, a List of the ids of stations
      * on the bus line, arranged in the order of stopping
      */
-    List<String> getStationNames(String name);
+    List<Long> getStationIds(Long busId);
 
     /**
-     * @param name name of the bus line
-     * @return null if the bus line with the given name does not exist, otherwise, a List of the stations
+     * @param busId
+     * @return null if the bus line with the given id does not exist, otherwise, a List of the stations
      * on the bus line, arranged in the order of stopping
      */
-    List<Station> getStations(String name);
+    List<Station> getStations(Long busId);
 
     /**
-     * @param name         name of the bus line
-     * @param stationNames names of the stations on the line, arranged in the order of stopping
+     * @param busId
+     * @param stationIds ids of the stations on the line, arranged in the order of stopping
      * @return false if failed to change stations, otherwise true
      */
-    boolean setStations(String name, List<String> stationNames);
+    boolean changeBusStations(Long busId, List<Long> stationIds);
 
 }

@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface CommentService {
     /**
-     * @param buildingName
-     * @param commenter
+     * @param buildingId
+     * @param commenterId
      * @param content
      * @return null if failed to add such comment, otherwise the id of the comment
      */
-    Long addComment(String buildingName, String commenter, String content);
+    Long addComment(Long buildingId, Long commenterId, String content);
 
     /**
      * @param commentId
@@ -52,12 +52,12 @@ public interface CommentService {
     CommentStatus getCommentStatus(Long commentId);
 
     /**
-     * @param buildingName only return comments of the given building, null means disable this filter
-     * @param commenter only return comments of the given commenter, null means disable this filter
+     * @param buildingId only return comments of the given building, null means disable this filter
+     * @param commenterId only return comments of the given commenter, null means disable this filter
      * @param status only return comments of the given status, null means disable this filter
      * @return all comments that satisfy above requirements
      */
-    List<Comment> getComments(String buildingName, String commenter, CommentStatus status);
+    List<Comment> getComments(Long buildingId, Long commenterId, CommentStatus status);
 
     /**
      * @param commentId

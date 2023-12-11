@@ -43,18 +43,20 @@ public class StoreServiceTest {
         for (int i = 0; i < numStores; ++i) {
             Store store = new Store();
             store.setName("test_store_" + i);
-            assertTrue(this.storeService.addStore(store.getName()));
+            Long storeId = this.storeService.addStore(store.getName());
+            assertNotNull(storeId);
+            store.setId(storeId);
             this.storeList.add(store);
         }
         for (int i = 0; i < numGoods; ++i) {
             Goods goods = new Goods();
             goods.setName("test_goods_" + i);
             int storeId = new Random().nextInt(this.storeList.size());
-            goods.setStore(this.storeList.get(storeId).getName());
+            goods.setStoreId(this.storeList.get(storeId).getId());
             goods.setPrice(new BigDecimal(new Random().nextInt(10)));
             goods.setQuantity(new Random().nextInt(10));
             Long goodsId = this.storeService.addGoods(
-                    goods.getStore(),
+                    goods.getStoreId(),
                     goods.getName(),
                     goods.getPrice(),
                     goods.getQuantity()
@@ -81,16 +83,20 @@ public class StoreServiceTest {
     @AfterEach
     void clean() {
         for (Store store : this.storeList) {
-            assertTrue(this.storeService.deleteStore(store.getName()));
+            assertTrue(this.storeService.deleteStore(store.getId()));
         }
     }
 
     @Test
     @Order(1)
-    void testGetStoreByName() {
+    void testGetStore() {
         for (Store store : this.storeList) {
             assertEquals(
                     this.storeService.getStoreByName(store.getName()),
+                    store
+            );
+            assertEquals(
+                    this.storeService.getStoreById(store.getId()),
                     store
             );
         }
@@ -101,6 +107,7 @@ public class StoreServiceTest {
     void testStoreExists() {
         for (Store store : this.storeList) {
             assertTrue(this.storeService.storeExists(store.getName()));
+            assertTrue(this.storeService.storeExists(store.getId()));
         }
     }
 
@@ -120,9 +127,9 @@ public class StoreServiceTest {
     void testListAllGoods() {
         for (Store store : this.storeList) {
             assertIterableEquals(
-                    this.storeService.listAllGoods(store.getName()).stream()
+                    this.storeService.listAllGoods(store.getId()).stream()
                             .sorted(Comparator.comparing(Goods::getId)).toList(),
-                    this.goodsList.stream().filter(e -> e.getStore().equals(store.getName()))
+                    this.goodsList.stream().filter(e -> e.getStoreId().equals(store.getId()))
                             .sorted(Comparator.comparing(Goods::getId)).toList()
             );
         }
@@ -144,7 +151,7 @@ public class StoreServiceTest {
     void testGetGoodsByName() {
         for (Goods goods : this.goodsList) {
             assertEquals(
-                    this.storeService.getGoodsByName(goods.getStore(), goods.getName()),
+                    this.storeService.getGoodsByName(goods.getStoreId(), goods.getName()),
                     goods
             );
         }

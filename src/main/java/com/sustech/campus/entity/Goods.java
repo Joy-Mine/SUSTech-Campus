@@ -1,6 +1,7 @@
 package com.sustech.campus.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -11,7 +12,10 @@ public class Goods {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
-    private String name, store;
+    private String name;
+
+    @TableField(value = "storeId")
+    private Long storeId;
 
     private BigDecimal price;
 
@@ -33,12 +37,12 @@ public class Goods {
         return name;
     }
 
-    public String getStore() {
-        return store;
+    public Long getStoreId() {
+        return storeId;
     }
 
-    public void setStore(String store) {
-        this.store = store;
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
     }
 
     public BigDecimal getPrice() {
@@ -61,8 +65,8 @@ public class Goods {
     public String toString() {
         return "Goods{" +
                 "id=" + id +
-                ", name='" + name + "'" +
-                ", store='" + store + "'" +
+                ", name='" + name + '\'' +
+                ", storeId=" + storeId +
                 ", price=" + price +
                 ", quantity=" + quantity +
                 '}';
@@ -76,7 +80,7 @@ public class Goods {
         return this == other
                 || this.id.equals(other.id)
                 && this.name.equals(other.name)
-                && this.store.equals(other.store)
+                && this.storeId.equals(other.storeId)
                 && this.price.compareTo(other.price) == 0
                 && this.quantity.equals(other.quantity);
     }

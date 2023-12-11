@@ -39,17 +39,17 @@ public class BuildingController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addBuilding(@RequestBody Building building) {
-        boolean success = buildingService.addBuilding(building.getName(), building.getDescription(), building.getDetails(), building.getLatitude(), building.getLongitude());
-        if (success) {
+        Long buildingId = buildingService.addBuilding(building.getName(), building.getDescription(), building.getDetails(), building.getLatitude(), building.getLongitude());
+        if (buildingId != null) {
             return ResponseEntity.ok("Building added successfully.");
         } else {
             return ResponseEntity.badRequest().body("Building already exists.");
         }
     }
 
-    @DeleteMapping("/delete/{name}")
-    public ResponseEntity<String> deleteBuilding(@PathVariable String name) {
-        boolean success = buildingService.deleteBuilding(name);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteBuilding(@PathVariable long id) {
+        boolean success = buildingService.deleteBuilding(id);
         if (success) {
             return ResponseEntity.ok("Building deleted successfully.");
         } else {
@@ -57,9 +57,9 @@ public class BuildingController {
         }
     }
 
-    @PutMapping("/updateLocation/{name}")
-    public ResponseEntity<String> changeBuildingLocation(@PathVariable String name, @RequestParam double latitude, @RequestParam double longitude) {
-        boolean success = buildingService.changeBuildingLocation(name, latitude, longitude);
+    @PutMapping("/updateLocation/{id}")
+    public ResponseEntity<String> changeBuildingLocation(@PathVariable long id, @RequestParam double latitude, @RequestParam double longitude) {
+        boolean success = buildingService.changeBuildingLocation(id, latitude, longitude);
         if (success) {
             return ResponseEntity.ok("Building location updated successfully.");
         } else {
@@ -67,9 +67,9 @@ public class BuildingController {
         }
     }
 
-    @PutMapping("/updateDescription/{name}")
-    public ResponseEntity<String> changeBuildingDescription(@PathVariable String name, @RequestBody String description) {
-        boolean success = buildingService.changeBuildingDescription(name, description);
+    @PutMapping("/updateDescription/{id}")
+    public ResponseEntity<String> changeBuildingDescription(@PathVariable long id, @RequestBody String description) {
+        boolean success = buildingService.changeBuildingDescription(id, description);
         if (success) {
             return ResponseEntity.ok("Building description updated successfully.");
         } else {
@@ -77,9 +77,9 @@ public class BuildingController {
         }
     }
 
-    @GetMapping("/photos/{buildingName}")
-    public ResponseEntity<List<BuildingPhoto>> listBuildingPhotos(@PathVariable String buildingName) {
-        List<BuildingPhoto> photos = buildingService.listBuildingPhotos(buildingName);
+    @GetMapping("/photos/{buildingId}")
+    public ResponseEntity<List<BuildingPhoto>> listBuildingPhotos(@PathVariable long buildingId) {
+        List<BuildingPhoto> photos = buildingService.listBuildingPhotos(buildingId);
         if (photos != null && !photos.isEmpty()) {
             return ResponseEntity.ok(photos);
         } else {
