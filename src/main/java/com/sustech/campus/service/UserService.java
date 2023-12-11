@@ -10,6 +10,8 @@ public interface UserService {
      */
     User getUserByName(String username);
 
+    User getUserByToken(String token);
+
     /**
      * @param username
      * @return null if the user does not exist, otherwise the type of the user

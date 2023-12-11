@@ -10,6 +10,10 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         System.out.println("登录拦截器");
+        System.out.println(request.getAuthType());
+        System.out.println(request.getCookies().toString());
+        System.out.println(request.getHeaders("account"));
+        System.out.println(response.toString());
         return true;
     }
 }

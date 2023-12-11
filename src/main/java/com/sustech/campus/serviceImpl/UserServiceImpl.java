@@ -1,5 +1,6 @@
 package com.sustech.campus.serviceImpl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sustech.campus.entity.User;
 import com.sustech.campus.enums.UserType;
 import com.sustech.campus.mapper.UserMapper;
@@ -35,6 +36,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByName(String username) {
         return this.userMapper.selectById(username);
+    }
+
+    @Override
+    public User getUserByToken(String token) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("token", token);
+        return this.userMapper.selectOne(queryWrapper);
     }
 
     @Override
