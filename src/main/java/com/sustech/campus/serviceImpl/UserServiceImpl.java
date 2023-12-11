@@ -41,6 +41,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByToken(String token) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("token", token);
+        return userMapper.selectOne(queryWrapper);
+    }
+
+    @Override
     public User getUserById(Long userId) {
         return this.userMapper.selectById(userId);
     }
