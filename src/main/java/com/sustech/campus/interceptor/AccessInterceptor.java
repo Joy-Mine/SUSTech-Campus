@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.sustech.campus.entity.User;
 import com.sustech.campus.enums.UserType;
 import com.sustech.campus.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 //import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -17,8 +18,14 @@ import java.lang.reflect.Method;
 
 @Component
 public class AccessInterceptor implements HandlerInterceptor {
+
     private static UserService userService;
 
+    @Autowired
+    public void setUserService( UserService userService) {
+        // 为解决先@Component 后@Autowired失效的方案
+        AccessInterceptor.userService = userService;
+    }
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
@@ -30,7 +37,15 @@ public class AccessInterceptor implements HandlerInterceptor {
         Method method = handlerMethod.getMethod();
         Access access = method.getAnnotation(Access.class);
         if (access == null) {
-            // 如果注解为null, 不需要拦截, 直接放过
+            String token = request.getHeader("TOKEN");
+            if(userService.getUserByToken(token) == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401状态码
+                response.getWriter().write("Unauthorized");
+                return false;
+            }
+            // 如果服务方法的注解为null，直接放过
+            System.out.println("服务注解为null");
+//            System.out.println(handlerMethod.toString()+"*****"+method.toString());
             return true;
         }
 
