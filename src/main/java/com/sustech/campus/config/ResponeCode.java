@@ -1,4 +1,4 @@
-package com.sustech.campus.interceptor;
+package com.sustech.campus.config;
 
 /**
  * @功能描述: 响应报文，统一封装类

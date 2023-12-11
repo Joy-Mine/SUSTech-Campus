@@ -6,6 +6,7 @@ import com.sustech.campus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,6 +39,27 @@ public class UserController {
             return ResponseEntity.badRequest().body("Registration failed: User already exists.");
         }
     }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ResponseEntity<String> login(@RequestBody User user){
+        User responseUser =  userService.getUserById(user.getId());
+        if(responseUser != null && user.getPassword()== responseUser.getPassword()) {
+            String token=userService.changeToken(user.getId());
+            return ResponseEntity.ok(token);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+//    @RequestMapping(value = "/adminLogin", method = RequestMethod.POST)
+//    public ResponseEntity<String> userLogin(User user){
+//        User responseUser =  userService.getUserById(user.getId());
+//        if(responseUser != null && user.getPassword()==responseUser.getPassword()) {
+//            String token=userService.changeToken(user.getId());
+//            return ResponseEntity.ok(token);
+//        }else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
     @PutMapping("/changeType/{id}")
     public ResponseEntity<String> changeUserType(@PathVariable Long id, @RequestBody UserType newType) {

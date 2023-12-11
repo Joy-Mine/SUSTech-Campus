@@ -1,4 +1,4 @@
-package com.sustech.campus.interceptor;
+package com.sustech.campus.config;
 
 
 import lombok.Data;

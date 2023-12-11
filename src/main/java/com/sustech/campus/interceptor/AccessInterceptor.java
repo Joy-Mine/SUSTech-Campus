@@ -1,6 +1,8 @@
 package com.sustech.campus.interceptor;
 
 import com.google.gson.Gson;
+import com.sustech.campus.config.APIResponse;
+import com.sustech.campus.config.ResponeCode;
 import com.sustech.campus.entity.User;
 import com.sustech.campus.enums.UserType;
 import com.sustech.campus.service.UserService;
@@ -37,12 +39,12 @@ public class AccessInterceptor implements HandlerInterceptor {
         Method method = handlerMethod.getMethod();
         Access access = method.getAnnotation(Access.class);
         if (access == null) {
-            String token = request.getHeader("TOKEN");
-            if(userService.getUserByToken(token) == null) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401状态码
-                response.getWriter().write("Unauthorized");
-                return false;
-            }
+//            String token = request.getHeader("TOKEN");
+//            if(userService.getUserByToken(token) == null) {
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401状态码
+//                response.getWriter().write("Unauthorized");
+//                return false;
+//            }
             // 如果服务方法的注解为null，直接放过
             System.out.println("服务注解为null");
 //            System.out.println(handlerMethod.toString()+"*****"+method.toString());
