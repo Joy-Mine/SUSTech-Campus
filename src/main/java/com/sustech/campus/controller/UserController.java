@@ -2,6 +2,7 @@ package com.sustech.campus.controller;
 
 import com.sustech.campus.entity.User;
 import com.sustech.campus.enums.UserType;
+import com.sustech.campus.interceptor.Access;
 import com.sustech.campus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,10 +46,18 @@ public class UserController {
     @PostMapping( "/login")
     public ResponseEntity<String> login(@RequestBody User user){
         User responseUser =  userService.getUserByName(user.getName());
-        if(responseUser != null && user.getPassword()== responseUser.getPassword()) {
-            String token=userService.changeToken(user.getId());
-            return ResponseEntity.ok(token);
+        if(responseUser != null) {
+            if(user.getPassword().equals(responseUser.getPassword())) {
+                String token = userService.changeToken(responseUser.getId());
+                System.out.println(token);
+                return ResponseEntity.ok(token);
+            }
+            else {
+                System.out.println("Wrong password.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong password");
+            }
         }else {
+            System.out.println("Failed.");
             return ResponseEntity.notFound().build();
         }
     }
@@ -63,6 +72,7 @@ public class UserController {
 //        }
 //    }
 
+    @Access(level = UserType.ADMIN)
     @PutMapping("/changeType/{id}")
     public ResponseEntity<String> changeUserType(@PathVariable Long id, @RequestBody UserType newType) {
         boolean success = userService.changeUserType(id, newType);
@@ -73,6 +83,7 @@ public class UserController {
         }
     }
 
+    @Access(level = UserType.ADMIN)
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         boolean success = userService.deleteUser(id);

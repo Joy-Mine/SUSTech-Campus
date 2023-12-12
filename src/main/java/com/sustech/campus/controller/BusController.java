@@ -2,6 +2,8 @@ package com.sustech.campus.controller;
 
 import com.sustech.campus.entity.Bus;
 import com.sustech.campus.entity.Station;
+import com.sustech.campus.enums.UserType;
+import com.sustech.campus.interceptor.Access;
 import com.sustech.campus.service.BusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ public class BusController {
         this.busService = busService;
     }
 
+    @Access(level = UserType.ADMIN)
     @PostMapping("/add")
     public ResponseEntity<String> addBusLine(@RequestBody Bus bus) {
         Long busId = busService.addBusLine(bus.getName());
@@ -31,6 +34,7 @@ public class BusController {
         }
     }
 
+    @Access(level = UserType.ADMIN)
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteBusLine(@PathVariable Long id) {
         boolean success = busService.deleteBusLine(id);
@@ -57,6 +61,7 @@ public class BusController {
         }
     }
 
+    @Access(level = UserType.ADMIN)
     @PutMapping("/updateStations/{id}")
     public ResponseEntity<String> setStations(@PathVariable Long id, @RequestBody List<Long> stationIds) {
         boolean success = busService.changeBusStations(id, stationIds);

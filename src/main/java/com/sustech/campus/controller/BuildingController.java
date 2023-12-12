@@ -2,6 +2,8 @@ package com.sustech.campus.controller;
 
 import com.sustech.campus.entity.Building;
 import com.sustech.campus.entity.BuildingPhoto;
+import com.sustech.campus.enums.UserType;
+import com.sustech.campus.interceptor.Access;
 import com.sustech.campus.service.BuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,7 @@ public class BuildingController {
         }
     }
 
+    @Access(level = UserType.ADMIN)
     @PostMapping("/add")
     public ResponseEntity<String> addBuilding(@RequestBody Building building) {
         Long buildingId = buildingService.addBuilding(building.getName(), building.getDescription(), building.getDetails(), building.getLatitude(), building.getLongitude());
@@ -47,6 +50,7 @@ public class BuildingController {
         }
     }
 
+    @Access(level = UserType.ADMIN)
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteBuilding(@PathVariable long id) {
         boolean success = buildingService.deleteBuilding(id);
@@ -57,6 +61,7 @@ public class BuildingController {
         }
     }
 
+    @Access(level = UserType.ADMIN)
     @PutMapping("/updateLocation/{id}")
     public ResponseEntity<String> changeBuildingLocation(@PathVariable long id, @RequestParam double latitude, @RequestParam double longitude) {
         boolean success = buildingService.changeBuildingLocation(id, latitude, longitude);
@@ -67,6 +72,7 @@ public class BuildingController {
         }
     }
 
+    @Access(level = UserType.ADMIN)
     @PutMapping("/updateDescription/{id}")
     public ResponseEntity<String> changeBuildingDescription(@PathVariable long id, @RequestBody String description) {
         boolean success = buildingService.changeBuildingDescription(id, description);

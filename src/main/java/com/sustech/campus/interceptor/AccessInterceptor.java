@@ -25,7 +25,6 @@ public class AccessInterceptor implements HandlerInterceptor {
 
     @Autowired
     public void setUserService( UserService userService) {
-        // 为解决先@Component 后@Autowired失效的方案
         AccessInterceptor.userService = userService;
     }
     @Override
@@ -46,14 +45,14 @@ public class AccessInterceptor implements HandlerInterceptor {
 //                return false;
 //            }
             // 如果服务方法的注解为null，直接放过
-            System.out.println("服务注解为null");
+            System.out.println("服务注解为null，无用户权限要求");
 //            System.out.println(handlerMethod.toString()+"*****"+method.toString());
             return true;
         }
 
         // 管理员
-        if(access.level().getCode() == AccessLevel.ADMIN.getCode()) {
-            String token = request.getHeader("ADMINTOKEN");
+        if(access.level() == UserType.ADMIN) {
+            String token = request.getHeader("TOKEN");
             User user = userService.getUserByToken(token);
 //            if(user != null && user.getRole().equals(String.valueOf(User.AdminUser))){
             if(user != null && user.getType()==UserType.ADMIN){
@@ -66,11 +65,11 @@ public class AccessInterceptor implements HandlerInterceptor {
         }
 
         // 用户
-        if(access.level().getCode() == AccessLevel.USER.getCode()) {
+        if(access.level() == UserType.USER) {
             String token = request.getHeader("TOKEN");
             User user = userService.getUserByToken(token);
 //            if(user != null && user.getRole().equals(String.valueOf(User.NormalUser))){
-            if(user != null && user.getType()==UserType.USER){
+            if(user != null && (user.getType()==UserType.USER || user.getType()==UserType.ADMIN)){
                 return true;
             }else {
                 APIResponse apiResponse = new APIResponse(ResponeCode.FAIL, "未登录");
@@ -79,6 +78,7 @@ public class AccessInterceptor implements HandlerInterceptor {
             }
         }
 
+        System.out.println("*****");
         return true;
     }
 

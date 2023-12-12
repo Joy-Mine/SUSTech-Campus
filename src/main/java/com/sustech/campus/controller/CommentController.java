@@ -1,6 +1,8 @@
 package com.sustech.campus.controller;
 
 import com.sustech.campus.entity.Comment;
+import com.sustech.campus.enums.UserType;
+import com.sustech.campus.interceptor.Access;
 import com.sustech.campus.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,8 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+
+    @Access(level = UserType.USER)
     @PostMapping("/add")
     public ResponseEntity<Long> addComment(@RequestBody Comment comment) {
         Long commentId = commentService.addComment(comment.getBuildingId(), comment.getCommenterId(), comment.getContent());
@@ -30,6 +34,8 @@ public class CommentController {
         }
     }
 
+
+    @Access(level = UserType.ADMIN)
     @DeleteMapping("/delete/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable Long commentId) {
         boolean success = commentService.deleteComment(commentId);
@@ -40,6 +46,7 @@ public class CommentController {
         }
     }
 
+    @Access(level = UserType.ADMIN)
     @PutMapping("/approve/{commentId}")
     public ResponseEntity<String> approveComment(@PathVariable Long commentId) {
         boolean success = commentService.approveComment(commentId);
@@ -50,6 +57,7 @@ public class CommentController {
         }
     }
 
+    @Access(level = UserType.ADMIN)
     @PutMapping("/reject/{commentId}")
     public ResponseEntity<String> rejectComment(@PathVariable Long commentId) {
         boolean success = commentService.rejectComment(commentId);

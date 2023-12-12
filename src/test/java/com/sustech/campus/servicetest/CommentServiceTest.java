@@ -80,7 +80,7 @@ public class CommentServiceTest {
                     user.getName(),
                     user.getPassword(),
                     user.getType()
-            );
+            ).getId();
             user.setId(userId);
             user.setToken(this.userService.getUserById(userId).getToken());
         }

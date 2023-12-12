@@ -40,7 +40,7 @@ public class UserServiceTest {
     @BeforeEach
     void insert() {
         for (User user : this.users) {
-            user.setId(this.userService.registerUser(user.getName(), user.getPassword(), user.getType()));
+            user.setId(this.userService.registerUser(user.getName(), user.getPassword(), user.getType()).getId());
             user.setToken(this.userService.getUserById(user.getId()).getToken());
             assertNotNull(user.getToken());
             assertNotNull(user.getId());
