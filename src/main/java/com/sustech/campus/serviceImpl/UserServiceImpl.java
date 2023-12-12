@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long registerUser(String username, String password, UserType type) {
+    public User registerUser(String username, String password, UserType type) {
         if (this.userExists(username)) {
             return null;
         }
@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
         user.setType(type);
         user.setToken(this.generateToken(null));
         this.userMapper.insert(user);
-        return user.getId();
+        return user;
     }
 
     @Override

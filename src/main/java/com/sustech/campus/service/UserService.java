@@ -50,7 +50,7 @@ public interface UserService {
      * @param type
      * @return null if registration failed, otherwise, the id of the user
      */
-    Long registerUser(String username, String password, UserType type);
+    User registerUser(String username, String password, UserType type);
 
     /**
      * @param userId

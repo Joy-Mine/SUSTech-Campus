@@ -14,4 +14,11 @@ public enum UserType {
         this.typeId = typeId;
         this.typeName = typeName;
     }
+
+    public static UserType getTypeByName(String typeName) {
+        for (UserType type : UserType.values())
+            if (type.typeName.equalsIgnoreCase(typeName))
+                return type;
+        throw new IllegalArgumentException("No UserType with typeName " + typeName + " found");
+    }
 }
