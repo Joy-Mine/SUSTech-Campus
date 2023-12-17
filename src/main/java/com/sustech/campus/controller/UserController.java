@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/user")
 public class UserController {
 
@@ -45,6 +46,7 @@ public class UserController {
 
     @PostMapping( "/login")
     public ResponseEntity<String> login(@RequestBody User user){
+        user.setType(UserType.USER);
         User responseUser =  userService.getUserByName(user.getName());
         if(responseUser != null) {
             if(user.getPassword().equals(responseUser.getPassword())) {
@@ -61,16 +63,28 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-//    @PostMapping( "/adminLogin")
-//    public ResponseEntity<String> userLogin(User user){
-//        User responseUser =  userService.getUserById(user.getId());
-//        if(responseUser != null && user.getPassword()==responseUser.getPassword()) {
-//            String token=userService.changeToken(user.getId());
-//            return ResponseEntity.ok(token);
-//        }else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+
+    @PostMapping( "/adminlogin")
+    public ResponseEntity<String> adminlogin(@RequestBody User user){
+        user.setType(UserType.ADMIN);
+//        System.out.println(user.toString());
+        User responseUser =  userService.getUserByName(user.getName());
+        if(responseUser != null) {
+//            System.out.println(responseUser.toString());
+            if(user.getPassword().equals(responseUser.getPassword())) {
+                String token = userService.changeToken(responseUser.getId());
+                System.out.println(token);
+                return ResponseEntity.ok(token);
+            }
+            else {
+                System.out.println("Wrong password.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong password");
+            }
+        }else {
+            System.out.println("Failed.");
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @Access(level = UserType.ADMIN)
     @PutMapping("/changeType/{id}")
