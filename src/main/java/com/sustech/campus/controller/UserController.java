@@ -44,8 +44,9 @@ public class UserController {
         }
     }
 
-    @PostMapping( "/login")
-    public ResponseEntity<String> login(@RequestBody User user){
+    @PostMapping( "/userlogin")
+    public ResponseEntity<String> userlogin(@RequestBody User user){
+        System.out.println("qqqqqqqqqqqqqq");
         user.setType(UserType.USER);
         User responseUser =  userService.getUserByName(user.getName());
         if(responseUser != null) {
@@ -67,13 +68,15 @@ public class UserController {
     @PostMapping( "/adminlogin")
     public ResponseEntity<String> adminlogin(@RequestBody User user){
         user.setType(UserType.ADMIN);
-//        System.out.println(user.toString());
+        System.out.println(user.toString());
         User responseUser =  userService.getUserByName(user.getName());
         if(responseUser != null) {
-//            System.out.println(responseUser.toString());
+            System.out.println(responseUser.toString());
             if(user.getPassword().equals(responseUser.getPassword())) {
                 String token = userService.changeToken(responseUser.getId());
+                System.out.println();
                 System.out.println(token);
+                System.out.println();
                 return ResponseEntity.ok(token);
             }
             else {
