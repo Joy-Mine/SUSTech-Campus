@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/user")
@@ -45,19 +48,22 @@ public class UserController {
     }
 
     @PostMapping( "/userlogin")
-    public ResponseEntity<String> userlogin(@RequestBody User user){
-        System.out.println("qqqqqqqqqqqqqq");
+    public ResponseEntity<Map<String, Object>> userlogin(@RequestBody User user){
         user.setType(UserType.USER);
         User responseUser =  userService.getUserByName(user.getName());
         if(responseUser != null) {
             if(user.getPassword().equals(responseUser.getPassword())) {
                 String token = userService.changeToken(responseUser.getId());
                 System.out.println(token);
-                return ResponseEntity.ok(token);
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("token", token);
+                responseMap.put("name", responseUser.getName());
+                responseMap.put("id", responseUser.getId());
+                return ResponseEntity.ok(responseMap);
             }
             else {
                 System.out.println("Wrong password.");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong password");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }else {
             System.out.println("Failed.");
@@ -66,7 +72,7 @@ public class UserController {
     }
 
     @PostMapping( "/adminlogin")
-    public ResponseEntity<String> adminlogin(@RequestBody User user){
+    public ResponseEntity<Map<String, Object>> adminlogin(@RequestBody User user){
         user.setType(UserType.ADMIN);
         System.out.println(user.toString());
         User responseUser =  userService.getUserByName(user.getName());
@@ -74,14 +80,16 @@ public class UserController {
             System.out.println(responseUser.toString());
             if(user.getPassword().equals(responseUser.getPassword())) {
                 String token = userService.changeToken(responseUser.getId());
-                System.out.println();
                 System.out.println(token);
-                System.out.println();
-                return ResponseEntity.ok(token);
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("token", token);
+                responseMap.put("name", responseUser.getName());
+                responseMap.put("id", responseUser.getId());
+                return ResponseEntity.ok(responseMap);
             }
             else {
                 System.out.println("Wrong password.");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong password");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }else {
             System.out.println("Failed.");
