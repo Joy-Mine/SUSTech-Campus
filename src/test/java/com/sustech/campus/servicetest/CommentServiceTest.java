@@ -62,6 +62,7 @@ public class CommentServiceTest {
             this.buildings.add(building);
             Long buildingId = this.buildingService.addBuilding(
                     building.getName(),
+                    building.getTag(),
                     building.getDescription(),
                     building.getDetails(),
                     building.getLatitude(),

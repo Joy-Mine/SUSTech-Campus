@@ -38,7 +38,7 @@ public interface BuildingService {
      * @param longitude
      * @return null if failed to add the given building, otherwise the id of the building
      */
-    Long addBuilding(String name, String description, String details, double latitude, double longitude);
+    Long addBuilding(String name, String tag, String description, String details, double latitude, double longitude);
 
     /**
      * @param buildingId

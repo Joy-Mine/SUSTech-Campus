@@ -44,6 +44,7 @@ public class BuildingServiceTest {
             building.setLongitude(-i);
             Long buildingId = this.buildingService.addBuilding(
                     building.getName(),
+                    building.getTag(),
                     building.getDescription(),
                     building.getDetails(),
                     building.getLatitude(),

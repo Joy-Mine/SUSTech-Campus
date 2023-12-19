@@ -27,6 +27,7 @@ create table building
 (
     id          bigint       not null,
     name        varchar(255) not null,
+    tag         varchar(255) not null,
     description text         not null,
     details     text         not null,
     latitude    double       not null,

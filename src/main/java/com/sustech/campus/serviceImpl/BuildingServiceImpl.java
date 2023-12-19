@@ -47,12 +47,13 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
-    public Long addBuilding(String name, String description, String details, double latitude, double longitude) {
+    public Long addBuilding(String name, String tag, String description, String details, double latitude, double longitude) {
         if (this.getBuildingByName(name) != null) {
             return null;
         }
         Building building = new Building();
         building.setName(name);
+        building.setTag(tag);
         building.setDescription(description);
         building.setDetails(details);
         building.setLatitude(latitude);

@@ -42,7 +42,7 @@ public class BuildingController {
     @Access(level = UserType.ADMIN)
     @PostMapping("/add")
     public ResponseEntity<String> addBuilding(@RequestBody Building building) {
-        Long buildingId = buildingService.addBuilding(building.getName(), building.getDescription(), building.getDetails(), building.getLatitude(), building.getLongitude());
+        Long buildingId = buildingService.addBuilding(building.getName(), building.getTag(), building.getDescription(), building.getDetails(), building.getLatitude(), building.getLongitude());
         if (buildingId != null) {
             return ResponseEntity.ok("Building added successfully.");
         } else {

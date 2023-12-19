@@ -11,6 +11,8 @@ public class Building {
 
     private String name;
 
+    private String tag;
+
     private String description, details;
 
     private double latitude, longitude;
@@ -29,6 +31,14 @@ public class Building {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTag(){
+        return tag;
+    }
+
+    public void setTag(String tag){
+        this.tag=tag;
     }
 
     public String getDescription() {
@@ -72,6 +82,7 @@ public class Building {
         return this == other
                 || this.id.equals(other.id)
                 && this.name.equals(other.name)
+                && this.tag.equals(other.tag)
                 && this.description.equals(other.description)
                 && this.details.equals(other.details)
                 && this.latitude == other.latitude
@@ -83,6 +94,7 @@ public class Building {
         return "Building{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", tag='" + tag +'\''+
                 ", description='" + description + '\'' +
                 ", details='" + details + '\'' +
                 ", latitude=" + latitude +
