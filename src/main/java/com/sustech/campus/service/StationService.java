@@ -65,5 +65,5 @@ public interface StationService {
 
     Station findNearestStation(double latitude, double longitude);
 
-    List<Long> findRouteBetweenStations(long stationId1, long stationId2);
+    List<Station> findRouteBetweenStations(long stationId1, long stationId2);
 }

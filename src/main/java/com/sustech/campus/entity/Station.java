@@ -13,6 +13,14 @@ public class Station {
 
     private double latitude, longitude;
 
+    public Station(){ }
+    public Station(Long id, String name, double latitude, double longitude) {
+        this.id = id;
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public Long getId() {
         return id;
     }

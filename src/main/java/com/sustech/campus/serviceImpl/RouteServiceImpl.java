@@ -23,7 +23,7 @@ public class RouteServiceImpl implements RouteService {
     }
 
     @Override
-    public List<Long> planRoute(long buildingId1, long buildingId2) {
+    public List<Station> planRoute(long buildingId1, long buildingId2) {
         Building building1 = buildingService.getBuildingById(buildingId1);
         Building building2 = buildingService.getBuildingById(buildingId2);
 

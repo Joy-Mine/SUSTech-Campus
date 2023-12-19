@@ -139,7 +139,7 @@ public class StationServiceImpl implements StationService {
 //    }
 
     @Override
-    public List<Long> findRouteBetweenStations(long startStationId, long endStationId) {
+    public List<Station> findRouteBetweenStations(long startStationId, long endStationId) {
         List<Station> allStations=this.listAllStations();
         Map<Long, StationNode> graph = buildGraph(allStations);
         return dijkstra(graph, startStationId, endStationId);
@@ -160,7 +160,7 @@ public class StationServiceImpl implements StationService {
         }
         return graph;
     }
-    private List<Long> dijkstra(Map<Long, StationNode> graph, long startId, long endId) {
+    private List<Station> dijkstra(Map<Long, StationNode> graph, long startId, long endId) {
         PriorityQueue<StationNode> queue = new PriorityQueue<>(Comparator.comparing(StationNode::getDistance));
         StationNode startNode = graph.get(startId);
         startNode.setDistance(0);
@@ -184,12 +184,11 @@ public class StationServiceImpl implements StationService {
         }
         return buildPath(graph, endId);
     }
-
-    private List<Long> buildPath(Map<Long, StationNode> graph, long endId) {
-        LinkedList<Long> path = new LinkedList<>();
+    private List<Station> buildPath(Map<Long, StationNode> graph, long endId) {
+        LinkedList<Station> path = new LinkedList<>();
         StationNode target = graph.get(endId);
         while (target != null && target.getPrevious() != null) {
-            path.addFirst(target.getId());
+            path.addFirst(this.getStationById(target.getId()));
             target = target.getPrevious();
         }
         return path;

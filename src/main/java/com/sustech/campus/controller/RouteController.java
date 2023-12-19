@@ -1,5 +1,6 @@
 package com.sustech.campus.controller;
 
+import com.sustech.campus.entity.Station;
 import com.sustech.campus.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,8 @@ public class RouteController {
     }
 
     @GetMapping("/planRoute")
-    public ResponseEntity<List<Long>> planRoute(@RequestParam long buildingId1, @RequestParam long buildingId2) {
-        List<Long> routePlan = routeService.planRoute(buildingId1, buildingId2);
+    public ResponseEntity<List<Station>> planRoute(@RequestParam long buildingId1, @RequestParam long buildingId2) {
+        List<Station> routePlan = routeService.planRoute(buildingId1, buildingId2);
         if (routePlan != null && !routePlan.isEmpty()) {
             return ResponseEntity.ok(routePlan);
         } else {
