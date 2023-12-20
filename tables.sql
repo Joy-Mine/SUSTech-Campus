@@ -6,7 +6,7 @@ drop table if exists store;
 drop table if exists comment_photo;
 drop table if exists comment;
 drop table if exists route;
-drop table if exists station;
+# drop table if exists station;
 drop table if exists bus;
 drop table if exists building_photo;
 drop table if exists building;
