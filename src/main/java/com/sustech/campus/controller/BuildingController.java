@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,6 +28,28 @@ public class BuildingController {
     public ResponseEntity<List<Building>> getAllBuildings() {
         List<Building> buildings = buildingService.listAllBuildings();
         return ResponseEntity.ok(buildings);
+    }
+
+    @GetMapping("/buildingCover")
+    public ResponseEntity<List<BuildingCover>> getAllBuildingsCover() {
+        List<Building> buildings = buildingService.listAllBuildings();
+        List<BuildingCover> buildingCovers = new ArrayList<>();
+
+        for (Building building : buildings) {
+            BuildingCover cover = new BuildingCover();
+            cover.setId(building.getId());
+            cover.setName(building.getName());
+            cover.setLocation(new double[]{building.getLatitude(), building.getLongitude()});
+            cover.setCategory(building.getTag());
+            cover.setIntroduction(building.getDescription());
+
+            List<BuildingPhoto> photos = buildingService.listBuildingPhotos(building.getId());
+            if (photos != null && !photos.isEmpty()) {
+                cover.setPath(photos.get(0).getPath());
+            }
+            buildingCovers.add(cover);
+        }
+        return ResponseEntity.ok(buildingCovers);
     }
 
     @GetMapping("/{name}")
@@ -92,4 +115,49 @@ public class BuildingController {
             return ResponseEntity.notFound().build();
         }
     }
+}
+class BuildingCover{
+    private Long id;
+    private String name;
+    private double[] location;
+    private String category;
+    private String introduction;
+    private String path;
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public double[] getLocation() {
+        return location;
+    }
+    public void setLocation(double[] location) {
+        this.location = location;
+    }
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
+    }
+    public String getIntroduction() {
+        return introduction;
+    }
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
+    }
+    public String getPath() {
+        return path;
+    }
+    public void setPath(String path) {
+        this.path = path;
+    }
+    public BuildingCover(){}
 }
