@@ -115,49 +115,50 @@ public class BuildingController {
             return ResponseEntity.notFound().build();
         }
     }
-}
-class BuildingCover{
-    private Long id;
-    private String name;
-    private double[] location;
-    private String category;
-    private String introduction;
-    private String path;
-    public Long getId() {
-        return id;
+
+    static class BuildingCover{
+        private Long id;
+        private String name;
+        private double[] location;
+        private String category;
+        private String introduction;
+        private String path;
+        public Long getId() {
+            return id;
+        }
+        public void setId(Long id) {
+            this.id = id;
+        }
+        public String getName() {
+            return name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+        public double[] getLocation() {
+            return location;
+        }
+        public void setLocation(double[] location) {
+            this.location = location;
+        }
+        public String getCategory() {
+            return category;
+        }
+        public void setCategory(String category) {
+            this.category = category;
+        }
+        public String getIntroduction() {
+            return introduction;
+        }
+        public void setIntroduction(String introduction) {
+            this.introduction = introduction;
+        }
+        public String getPath() {
+            return path;
+        }
+        public void setPath(String path) {
+            this.path = path;
+        }
+        public BuildingCover(){}
     }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public double[] getLocation() {
-        return location;
-    }
-    public void setLocation(double[] location) {
-        this.location = location;
-    }
-    public String getCategory() {
-        return category;
-    }
-    public void setCategory(String category) {
-        this.category = category;
-    }
-    public String getIntroduction() {
-        return introduction;
-    }
-    public void setIntroduction(String introduction) {
-        this.introduction = introduction;
-    }
-    public String getPath() {
-        return path;
-    }
-    public void setPath(String path) {
-        this.path = path;
-    }
-    public BuildingCover(){}
 }

@@ -62,8 +62,4 @@ public interface StationService {
      * @return ids of bus that stop at the given station
      */
     List<Long> listAllBusIds(Long stationId);
-
-    Station findNearestStation(double latitude, double longitude);
-
-    List<Station> findRouteBetweenStations(long stationId1, long stationId2);
 }

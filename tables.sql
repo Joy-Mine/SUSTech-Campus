@@ -45,6 +45,7 @@ create table building_photo
     constraint foreign key (buildingId) references building (id)
 );
 
+#busline name
 create table bus
 (
     id   bigint       not null,
@@ -63,6 +64,7 @@ create table station
     unique(name)
 );
 
+#busline
 create table route
 (
     busId     bigint not null,
