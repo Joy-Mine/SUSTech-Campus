@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/building")
 public class BuildingController {
 
@@ -39,7 +40,7 @@ public class BuildingController {
             BuildingCover cover = new BuildingCover();
             cover.setId(building.getId());
             cover.setName(building.getName());
-            cover.setLocation(new double[]{building.getLatitude(), building.getLongitude()});
+            cover.setLocation(new double[]{building.getLongitude(), building.getLatitude()});
             cover.setCategory(building.getTag());
             cover.setIntroduction(building.getDescription());
 

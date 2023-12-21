@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/route")
 public class RouteController {
 
@@ -23,8 +24,10 @@ public class RouteController {
     public ResponseEntity<List<Station>> planRoute(@RequestParam long buildingId1, @RequestParam long buildingId2) {
         List<Station> routePlan = routeService.planRoute(buildingId1, buildingId2);
         if (routePlan != null && !routePlan.isEmpty()) {
+            System.out.println(routePlan);
             return ResponseEntity.ok(routePlan);
         } else {
+            System.out.println("not route");
             return ResponseEntity.notFound().build();
         }
     }
