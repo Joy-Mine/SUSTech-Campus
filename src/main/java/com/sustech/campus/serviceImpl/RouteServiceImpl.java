@@ -52,6 +52,7 @@ public class RouteServiceImpl implements RouteService {
 
         List<Route> routes=routeMapper.selectList(null);
         Map<Long, StationNode> graph = buildGraph(stations, routes);
+        System.out.println(graph);
         return dijkstra(graph, nearestStation1.getId(), nearestStation2.getId());
     }
     private Map<Long, StationNode> buildGraph(List<Station> stations, List<Route> routes) {
@@ -71,22 +72,26 @@ public class RouteServiceImpl implements RouteService {
         for (Route route : routes){
             if(stationsOnABusline.containsKey(route.getBusId()))
                 stationsOnABusline.get(route.getBusId()).add(new StationOrder(route.getStationId(),route.getStopOrder()));
-            else
-                stationsOnABusline.put(route.getBusId(),new PriorityQueue<>(Comparator.comparing(StationOrder::getStopOrder)));
+            else {
+                stationsOnABusline.put(route.getBusId(), new PriorityQueue<>(Comparator.comparing(StationOrder::getStopOrder)));
+                stationsOnABusline.get(route.getBusId()).add(new StationOrder(route.getStationId(),route.getStopOrder()));
+            }
         }
         //遍历stationsOnABusline即可
         for (Long key : stationsOnABusline.keySet()){
             PriorityQueue<StationOrder> aBusline=stationsOnABusline.get(key);
-//            Long preId=aBusline.poll().getStationId();
-            StationNode preSta=graph.get(aBusline.poll().getStationId());
+            Long preId=aBusline.poll().getStationId();
+            StationNode preSta=graph.get(preId);
+            Long curId=null;
             StationNode curSta=null;
             while (!aBusline.isEmpty()){
-//                Long curId=aBusline.poll().getStationId();
-                curSta=graph.get(aBusline.poll().getStationId());
+                curId=aBusline.poll().getStationId();
+                curSta=graph.get(curId);
                 double distance=calculateDistance(preSta.getLatitude(),preSta.getLongitude(),curSta.getLatitude(),curSta.getLongitude());
                 preSta.addEdge(new StationEdge(curSta, distance));
                 curSta.addEdge(new StationEdge(preSta, distance));
                 preSta=curSta;
+                preId=curId;
             }
         }
         return graph;
@@ -131,9 +136,10 @@ public class RouteServiceImpl implements RouteService {
     private List<Station> buildPath(Map<Long, StationNode> graph, long endId) {
         LinkedList<Station> path = new LinkedList<>();
         StationNode target = graph.get(endId);
+        path.addFirst(stationService.getStationById(target.getId()));
         while (target != null && target.getPrevious() != null) {
-            path.addFirst(stationService.getStationById(target.getId()));
             target = target.getPrevious();
+            path.addFirst(stationService.getStationById(target.getId()));
         }
         return path;
     }
