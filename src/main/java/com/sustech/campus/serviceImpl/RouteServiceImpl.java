@@ -49,20 +49,15 @@ public class RouteServiceImpl implements RouteService {
                 nearestStation2 = station;
             }
         }
-//        Station nearestStation1 = stationService.findNearestStation(building1.getLatitude(), building1.getLongitude());
-//        Station nearestStation2 = stationService.findNearestStation(building2.getLatitude(), building2.getLongitude());
-//        return stationService.findRouteBetweenStations(nearestStation1.getId(), nearestStation2.getId());
 
         List<Route> routes=routeMapper.selectList(null);
         Map<Long, StationNode> graph = buildGraph(stations, routes);
         return dijkstra(graph, nearestStation1.getId(), nearestStation2.getId());
     }
-    //todo: 建图出错了呀
     private Map<Long, StationNode> buildGraph(List<Station> stations, List<Route> routes) {
         Map<Long, StationNode> graph = new HashMap<>();
-        for (Station station : stations) {
+        for (Station station : stations)
             graph.put(station.getId(), new StationNode(station.getId(), station.getLatitude(), station.getLongitude()));
-        }
 //        for (Station station1 : stations) {
 //            for (Station station2 : stations) {
 //                if (!station1.equals(station2)) {
@@ -80,11 +75,25 @@ public class RouteServiceImpl implements RouteService {
                 stationsOnABusline.put(route.getBusId(),new PriorityQueue<>(Comparator.comparing(StationOrder::getStopOrder)));
         }
         //遍历stationsOnABusline即可
+        for (Long key : stationsOnABusline.keySet()){
+            PriorityQueue<StationOrder> aBusline=stationsOnABusline.get(key);
+//            Long preId=aBusline.poll().getStationId();
+            StationNode preSta=graph.get(aBusline.poll().getStationId());
+            StationNode curSta=null;
+            while (!aBusline.isEmpty()){
+//                Long curId=aBusline.poll().getStationId();
+                curSta=graph.get(aBusline.poll().getStationId());
+                double distance=calculateDistance(preSta.getLatitude(),preSta.getLongitude(),curSta.getLatitude(),curSta.getLongitude());
+                preSta.addEdge(new StationEdge(curSta, distance));
+                curSta.addEdge(new StationEdge(preSta, distance));
+                preSta=curSta;
+            }
+        }
         return graph;
     }
     static class StationOrder{
-        Long stationId;
-        int stopOrder;
+        private Long stationId;
+        private int stopOrder;
         public StationOrder(Long stationId, int stopOrder) {
             this.stationId = stationId;
             this.stopOrder = stopOrder;
@@ -176,6 +185,12 @@ public class RouteServiceImpl implements RouteService {
         }
         public List<StationEdge> getEdges() {
             return edges;
+        }
+        public double getLatitude() {
+            return latitude;
+        }
+        public double getLongitude() {
+            return longitude;
         }
     }
     static class StationEdge {
