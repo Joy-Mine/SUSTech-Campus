@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -21,11 +23,16 @@ public class RouteController {
     }
 
     @GetMapping("/planRoute")
-    public ResponseEntity<List<Station>> planRoute(@RequestParam long buildingId1, @RequestParam long buildingId2) {
+    public ResponseEntity<List<double[]>> planRoute(@RequestParam long buildingId1, @RequestParam long buildingId2) {
         List<Station> routePlan = routeService.planRoute(buildingId1, buildingId2);
         if (routePlan != null && !routePlan.isEmpty()) {
             System.out.println(routePlan);
-            return ResponseEntity.ok(routePlan);
+            List<double[]> ans=new ArrayList<>();
+            for(Station station : routePlan)
+                ans.add(new double[]{station.getLatitude(), station.getLongitude()});
+            for (double[] array : ans)
+                System.out.println(Arrays.toString(array));
+            return ResponseEntity.ok(ans);
         } else {
             System.out.println("not route");
             return ResponseEntity.notFound().build();
