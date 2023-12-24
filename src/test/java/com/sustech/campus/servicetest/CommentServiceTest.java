@@ -57,6 +57,7 @@ public class CommentServiceTest {
             building.setName("test_building_" + i);
             building.setDescription("");
             building.setDetails("");
+            building.setTag("");
             building.setLatitude(0);
             building.setLongitude(0);
             this.buildings.add(building);
