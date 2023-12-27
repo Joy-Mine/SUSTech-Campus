@@ -135,17 +135,12 @@ public class OrderServiceTest {
         }
         for (int i = 0; i < numOrders; ++i) {
             Order order = this.orderList.get(i);
-            // todo: check quantity change
-//            for (OrderItem item : order.getItems()) {
-//                assertEquals(
-//                        this.storeService.getGoodsById(item.getGoodsId()).getQuantity(),
-//                        quantityMap.get(item.getGoodsId())
-//                );
-//                quantityMap.put(
-//                        item.getGoodsId(),
-//                        quantityMap.get(item.getGoodsId()) - item.getAmount()
-//                );
-//            }
+            for (OrderItem item : order.getItems()) {
+                quantityMap.replace(
+                        item.getGoodsId(),
+                        quantityMap.get(item.getGoodsId()) - item.getAmount()
+                );
+            }
             Order result = orderService.createOrder(
                     order.getPurchaser(),
                     order.getItems().stream().map(OrderItem::getGoodsId).toList(),
@@ -157,13 +152,6 @@ public class OrderServiceTest {
             assertTrue(Math.abs(result.getTime() - System.currentTimeMillis()) < 1000);
             order.setId(result.getId());
             order.setTime(result.getTime());
-            // todo: check quantity change
-//            for (OrderItem item : order.getItems()) {
-//                assertEquals(
-//                        this.storeService.getGoodsById(item.getGoodsId()).getQuantity(),
-//                        quantityMap.get(item.getGoodsId())
-//                );
-//            }
             for (OrderItem item : order.getItems()) {
                 item.setOrderId(result.getId());
             }
@@ -183,6 +171,20 @@ public class OrderServiceTest {
         }
         for (User user : this.userList) {
             userService.deleteUser(user.getId());
+        }
+    }
+
+    void testQuantityEquals() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ignore) {
+
+        }
+        for (Goods goods : this.goodsList) {
+            assertEquals(
+                    this.storeService.getGoodsById(goods.getId()).getQuantity(),
+                    quantityMap.get(goods.getId())
+            );
         }
     }
 
@@ -277,40 +279,36 @@ public class OrderServiceTest {
 
     @Test
     @org.junit.jupiter.api.Order(6)
+    void testCreateOrder() {
+        testQuantityEquals();
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(7)
     void testOrderCancelled() {
+        testQuantityEquals();
         for (Order order : this.orderList) {
-            // todo: check quantity change
-//            for (OrderItem item : order.getItems()) {
-//                assertEquals(
-//                        quantityMap.get(item.getGoodsId()),
-//                        storeService.getGoodsById(item.getGoodsId()).getQuantity()
-//                );
-//                quantityMap.put(
-//                        item.getOrderId(),
-//                        quantityMap.get(item.getGoodsId()) + item.getAmount()
-//                );
-//            }
+            for (OrderItem item : order.getItems()) {
+                quantityMap.replace(
+                        item.getGoodsId(),
+                        quantityMap.get(item.getGoodsId()) + item.getAmount()
+                );
+            }
             assertEquals(
                     orderService.getOrderById(order.getId()).getStatus(),
                     OrderStatus.WAITING_PAYMENT
             );
             assertTrue(orderService.orderCancelled(order.getId()));
-            // todo: check quantity change
-//            for (OrderItem item : order.getItems()) {
-//                assertEquals(
-//                        quantityMap.get(item.getGoodsId()),
-//                        storeService.getGoodsById(item.getGoodsId()).getQuantity()
-//                );
-//            }
             assertEquals(
                     orderService.getOrderById(order.getId()).getStatus(),
                     OrderStatus.CANCELLED
             );
         }
+        testQuantityEquals();
     }
 
     @Test
-    @org.junit.jupiter.api.Order(7)
+    @org.junit.jupiter.api.Order(8)
     void testOrderFinished() {
         for (Order order : this.orderList) {
             orderService.orderPaid(order.getId());
@@ -327,37 +325,27 @@ public class OrderServiceTest {
     }
 
     @Test
-    @org.junit.jupiter.api.Order(8)
+    @org.junit.jupiter.api.Order(9)
     void testOrderRefunded() {
+        testQuantityEquals();
         for (Order order : this.orderList) {
             orderService.orderPaid(order.getId());
-            // todo: check quantity change
-//            for (OrderItem item : order.getItems()) {
-//                assertEquals(
-//                        quantityMap.get(item.getGoodsId()),
-//                        storeService.getGoodsById(item.getGoodsId()).getQuantity()
-//                );
-//                quantityMap.put(
-//                        item.getOrderId(),
-//                        quantityMap.get(item.getGoodsId()) + item.getAmount()
-//                );
-//            }
+            for (OrderItem item : order.getItems()) {
+                quantityMap.replace(
+                        item.getGoodsId(),
+                        quantityMap.get(item.getGoodsId()) + item.getAmount()
+                );
+            }
             assertEquals(
                     orderService.getOrderById(order.getId()).getStatus(),
                     OrderStatus.PAID
             );
             assertTrue(orderService.orderRefunded(order.getId()));
-            // todo: check quantity change
-//            for (OrderItem item : order.getItems()) {
-//                assertEquals(
-//                        quantityMap.get(item.getGoodsId()),
-//                        storeService.getGoodsById(item.getGoodsId()).getQuantity()
-//                );
-//            }
             assertEquals(
                     orderService.getOrderById(order.getId()).getStatus(),
                     OrderStatus.REFUNDED
             );
         }
+        testQuantityEquals();
     }
 }

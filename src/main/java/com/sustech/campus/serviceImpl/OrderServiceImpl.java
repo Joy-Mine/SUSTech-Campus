@@ -12,6 +12,8 @@ import com.sustech.campus.mapper.UserMapper;
 import com.sustech.campus.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackForClassName = {"Exception", "RuntimeException"})
     public Order createOrder(Long purchaser, List<Long> goodsIds, List<Integer> amounts, List<BigDecimal> prices) {
         if (goodsIds.size() != amounts.size() || goodsIds.size() != prices.size()) {
             return null;
@@ -119,6 +122,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackForClassName = {"Exception", "RuntimeException"})
     public boolean orderCancelled(Long orderId) {
         if (!this.changeOrderStatus(orderId, OrderStatus.WAITING_PAYMENT, OrderStatus.CANCELLED)) {
             return false;
@@ -134,6 +138,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackForClassName = {"Exception", "RuntimeException"})
     public boolean orderRefunded(Long orderId) {
         if (!this.changeOrderStatus(orderId, OrderStatus.PAID, OrderStatus.REFUNDED)) {
             return false;

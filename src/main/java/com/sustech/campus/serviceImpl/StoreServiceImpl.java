@@ -10,6 +10,8 @@ import com.sustech.campus.mapper.StoreMapper;
 import com.sustech.campus.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -147,6 +149,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackForClassName = {"Exception", "RuntimeException"})
     public boolean changeGoodsQuantity(Long goodsId, Integer newQuantity) {
         Goods goods = this.getGoodsById(goodsId);
         if (goods == null) {
