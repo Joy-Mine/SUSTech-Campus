@@ -3,6 +3,8 @@ package com.sustech.campus.service;
 import com.sustech.campus.entity.User;
 import com.sustech.campus.enums.UserType;
 
+import java.util.List;
+
 public interface UserService {
     /**
      * @param username
@@ -78,4 +80,6 @@ public interface UserService {
      * @return null if failed to change the token, otherwise, the new token
      */
     String changeToken(Long userId);
+
+    List<User> getAllUsers();
 }

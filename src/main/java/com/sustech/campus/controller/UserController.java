@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -116,6 +118,24 @@ public class UserController {
             return ResponseEntity.ok("User deleted successfully.");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+    }
+
+    @Access(level = UserType.ADMIN)
+    @GetMapping("/allusers")
+    public ResponseEntity<List<String[]>> getAllUsers(){
+        List<User> allUsers=userService.getAllUsers();
+        List<String[]> neededUsers=new ArrayList<>();
+        for(User user : allUsers){
+            String[] tmp=new String[2];
+            tmp[0]=user.getName();
+            tmp[1]=user.getPassword();
+            neededUsers.add(tmp);
+        }
+        if (allUsers!=null) {
+            return ResponseEntity.ok(neededUsers);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 }

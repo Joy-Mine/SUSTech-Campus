@@ -8,6 +8,8 @@ import com.sustech.campus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -131,5 +133,11 @@ public class UserServiceImpl implements UserService {
         user.setToken(this.generateToken(user.getToken()));
         this.userMapper.updateById(user);
         return user.getToken();
+    }
+
+    @Override
+    public List<User> getAllUsers(){
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        return userMapper.selectList(queryWrapper);
     }
 }
