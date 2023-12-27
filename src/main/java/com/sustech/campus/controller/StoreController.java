@@ -80,7 +80,7 @@ public class StoreController {
     @Access(level = UserType.ADMIN)
     @DeleteMapping("/goods/delete/{goodsId}")
     public ResponseEntity<String> deleteGoods(@PathVariable Long goodsId) {
-        boolean success = storeService.deleteGoods(goodsId);
+        boolean success = storeService.fakeDeleteGoods(goodsId);
         if (success) {
             return ResponseEntity.ok("Goods deleted successfully.");
         } else {

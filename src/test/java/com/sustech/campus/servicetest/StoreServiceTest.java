@@ -63,6 +63,7 @@ public class StoreServiceTest {
             );
             assertNotNull(goodsId);
             goods.setId(goodsId);
+            goods.setHidden(false);
             this.goodsList.add(goods);
         }
         for (int i = 0; i < numGoodsPhotos; ++i) {
@@ -244,6 +245,19 @@ public class StoreServiceTest {
         for (GoodsPhoto photo : this.photoList) {
             assertTrue(this.storeService.deleteGoodsPhoto(photo.getId()));
             assertFalse(this.storeService.goodsPhotoExists(photo.getId()));
+        }
+    }
+
+    @Test
+    @Order(15)
+    void testFakeDeleteGoods() {
+        for (Goods goods : this.goodsList) {
+            assertTrue(this.storeService.fakeDeleteGoods(goods.getId()));
+            goods.setHidden(true);
+            assertEquals(
+                    this.storeService.getGoodsById(goods.getId(), true),
+                    goods
+            );
         }
     }
 }

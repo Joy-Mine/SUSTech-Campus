@@ -74,7 +74,7 @@ public class StoreServiceImpl implements StoreService {
         if (!(this.storeExists(storeId))) {
             return false;
         }
-        List<Goods> goodsList = this.listAllGoods(storeId);
+        List<Goods> goodsList = this.listAllGoods(storeId, true);
         for (Goods goods : goodsList) {
             this.deleteGoods(goods.getId());
         }
@@ -92,23 +92,41 @@ public class StoreServiceImpl implements StoreService {
         goods.setStoreId(storeId);
         goods.setPrice(price);
         goods.setQuantity(quantity);
+        goods.setHidden(false);
         this.goodsMapper.insert(goods);
         return goods.getId();
     }
 
     @Override
     public List<Goods> listAllGoods(Long storeId) {
+        return listAllGoods(storeId, false);
+    }
+
+    @Override
+    public List<Goods> listAllGoods(Long storeId, boolean includeHidden) {
         if (!this.storeExists(storeId)) {
             return null;
         }
         QueryWrapper<Goods> wrapper = new QueryWrapper<>();
         wrapper.eq("storeId", storeId);
+        if (!includeHidden) {
+            wrapper.eq("hidden", false);
+        }
         return this.goodsMapper.selectList(wrapper);
     }
 
     @Override
     public Goods getGoodsById(Long goodsId) {
-        return this.goodsMapper.selectById(goodsId);
+        return getGoodsById(goodsId, false);
+    }
+
+    @Override
+    public Goods getGoodsById(Long goodsId, boolean includeHidden) {
+        Goods goods = this.goodsMapper.selectById(goodsId);
+        if (goods == null || (goods.isHidden() && !includeHidden)) {
+            return null;
+        }
+        return goods;
     }
 
     @Override
@@ -116,17 +134,34 @@ public class StoreServiceImpl implements StoreService {
         QueryWrapper<Goods> wrapper = new QueryWrapper<>();
         wrapper.eq("storeId", storeId);
         wrapper.eq("name", goodsName);
+        wrapper.eq("hidden", false);
         return this.goodsMapper.selectOne(wrapper);
     }
 
     @Override
     public boolean goodsExists(Long goodsId) {
-        return this.getGoodsById(goodsId) != null;
+        return goodsExists(goodsId, false);
+    }
+
+    @Override
+    public boolean goodsExists(Long goodsId, boolean includeHidden) {
+        return this.getGoodsById(goodsId, includeHidden) != null;
+    }
+
+    @Override
+    public boolean fakeDeleteGoods(Long goodsId) {
+        Goods goods = this.getGoodsById(goodsId);
+        if (goods == null || goods.isHidden()) {
+            return false;
+        }
+        goods.setHidden(true);
+        this.goodsMapper.updateById(goods);
+        return true;
     }
 
     @Override
     public boolean deleteGoods(Long goodsId) {
-        if (!this.goodsExists(goodsId)) {
+        if (!this.goodsExists(goodsId, true)) {
             return false;
         }
         List<GoodsPhoto> photos = this.listAllGoodsPhotos(goodsId);
@@ -184,7 +219,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public List<GoodsPhoto> listAllGoodsPhotos(Long goodsId) {
-        if (!this.goodsExists(goodsId)) {
+        if (!this.goodsExists(goodsId, true)) {
             return null;
         }
         QueryWrapper<GoodsPhoto> wrapper = new QueryWrapper<>();

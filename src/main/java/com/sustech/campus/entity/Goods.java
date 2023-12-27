@@ -18,6 +18,8 @@ public class Goods {
 
     private Integer quantity;
 
+    private Boolean hidden;
+
     public Long getId() {
         return id;
     }
@@ -58,6 +60,14 @@ public class Goods {
         this.quantity = quantity;
     }
 
+    public Boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
     @Override
     public String toString() {
         return "Goods{" +
@@ -66,6 +76,7 @@ public class Goods {
                 ", storeId=" + storeId +
                 ", price=" + price +
                 ", quantity=" + quantity +
+                ", hidden=" + hidden +
                 '}';
     }
 
@@ -79,6 +90,7 @@ public class Goods {
                 && this.name.equals(other.name)
                 && this.storeId.equals(other.storeId)
                 && this.price.compareTo(other.price) == 0
-                && this.quantity.equals(other.quantity);
+                && this.quantity.equals(other.quantity)
+                && this.hidden.equals(other.hidden);
     }
 }
