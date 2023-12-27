@@ -107,6 +107,17 @@ public class BuildingController {
         }
     }
 
+    @Access(level = UserType.ADMIN)
+    @PutMapping("/updateTag/{id}")
+    public ResponseEntity<String> changeBuildingTag(@PathVariable long id, @RequestBody String tag) {
+        boolean success = buildingService.changeBuildingTag(id, tag);
+        if (success) {
+            return ResponseEntity.ok("Building tag updated successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Building not found.");
+        }
+    }
+
     @GetMapping("/photos/{buildingId}")
     public ResponseEntity<List<BuildingPhoto>> listBuildingPhotos(@PathVariable long buildingId) {
         List<BuildingPhoto> photos = buildingService.listBuildingPhotos(buildingId);
