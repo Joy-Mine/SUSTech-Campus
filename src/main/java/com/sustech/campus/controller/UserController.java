@@ -4,7 +4,6 @@ import com.sustech.campus.entity.User;
 import com.sustech.campus.enums.UserType;
 import com.sustech.campus.interceptor.Access;
 import com.sustech.campus.service.UserService;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -146,14 +148,18 @@ public class UserController {
     }
 
     @Access(level = UserType.ADMIN)
-    @GetMapping("/mute")
-    public boolean mute(@RequestBody String username){
+    @PostMapping("/mute")
+    public boolean mute(@RequestBody JsonObject jsonName){
+        String username=jsonName.get("name").getAsString();
         return userService.muteUser(username);
     }
 
     @Access(level = UserType.ADMIN)
-    @GetMapping("/unmute")
-    public boolean unmute(@RequestBody String username){
+    @PostMapping("/unmute")
+    public boolean unmute(@RequestBody JsonObject jsonName){
+        System.out.println("-------------------------------------------");
+        System.out.println(jsonName);
+        String username=jsonName.get("name").getAsString();
         return userService.unmuteUser(username);
     }
 }
