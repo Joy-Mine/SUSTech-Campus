@@ -231,7 +231,7 @@ public class StoreServiceTest {
     void testListAllGoodsPhotos() {
         for (Goods goods : this.goodsList) {
             assertIterableEquals(
-                    this.storeService.listAllGoodsPhotos(goods.getId()).stream()
+                    this.storeService.listAllPhotosOfaGood(goods.getId()).stream()
                             .sorted(Comparator.comparing(GoodsPhoto::getId)).toList(),
                     this.photoList.stream().filter(e -> e.getGoodsId().equals(goods.getId()))
                             .sorted(Comparator.comparing(GoodsPhoto::getId)).toList()

@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @TableName("goods_photo")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GoodsPhoto {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;

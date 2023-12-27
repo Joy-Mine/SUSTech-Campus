@@ -1,12 +1,14 @@
 package com.sustech.campus.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 
 @TableName("goods")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Goods {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
@@ -69,7 +71,7 @@ public class Goods {
         return hidden;
     }
 
-    public void setHidden(boolean hidden) {
+    public void setHidden(Boolean hidden) {
         this.hidden = hidden;
     }
 

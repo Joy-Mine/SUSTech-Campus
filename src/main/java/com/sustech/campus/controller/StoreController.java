@@ -1,5 +1,7 @@
 package com.sustech.campus.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sustech.campus.entity.Goods;
 import com.sustech.campus.entity.GoodsPhoto;
 import com.sustech.campus.entity.Store;
@@ -58,14 +60,25 @@ public class StoreController {
 
     @Access(level = UserType.USER)
     @GetMapping("/goods/{storeId}")
-    public ResponseEntity<List<Goods>> listAllGoods(@PathVariable Long storeId) {
+    public ResponseEntity<String> listAllGoods(@PathVariable Long storeId) throws JsonProcessingException {
         List<Goods> goods = storeService.listAllGoods(storeId);
         if (goods != null && !goods.isEmpty()) {
             goods = goods.stream()
                     .filter(Objects::nonNull)
-                    .peek(e -> e.setPhotos(storeService.listAllPhotosOfaGood(e.getId())))
+                    .peek(
+                            e -> e.setPhotos(
+                                    storeService.listAllPhotosOfaGood(e.getId()).stream()
+                                            .peek(e1 -> e1.setGoodsId(null))
+                                            .peek(e1 -> e1.setId(null))
+                                            .toList()
+                            )
+                    )
+                    .peek(e -> e.setStoreId(null))
+                    .peek(e -> e.setQuantity(null))
+                    .peek(e -> e.setHidden(null))
                     .toList();
-            return ResponseEntity.ok(goods);
+            ObjectMapper objectMapper = new ObjectMapper();
+            return ResponseEntity.ok(objectMapper.writeValueAsString(goods));
         } else {
             return ResponseEntity.notFound().build();
         }
