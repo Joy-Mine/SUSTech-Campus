@@ -6,7 +6,7 @@ drop table if exists store;
 drop table if exists comment_photo;
 drop table if exists comment;
 drop table if exists route;
-# drop table if exists station;
+drop table if exists station;
 drop table if exists bus;
 drop table if exists building_photo;
 drop table if exists building;
@@ -127,19 +127,20 @@ create table goods_photo
 
 create table `order`
 (
-    id        bigint       not null,
-    status    int          not null,
-    purchaser varchar(255) not null,
-    time      time         not null,
+    id        bigint not null,
+    status    int    not null,
+    purchaser bigint not null,
+    time      bigint not null,
     primary key (id),
-    constraint foreign key (purchaser) references `user` (name)
+    constraint foreign key (purchaser) references `user` (id)
 );
 
 create table order_item
 (
-    orderId bigint not null,
-    goodsId bigint not null,
-    amount  int    not null,
+    orderId bigint        not null,
+    goodsId bigint        not null,
+    amount  int           not null,
+    price   numeric(8, 2) not null,
     primary key (orderId, goodsId),
     constraint foreign key (orderId) references `order` (id),
     constraint foreign key (goodsId) references goods (id)

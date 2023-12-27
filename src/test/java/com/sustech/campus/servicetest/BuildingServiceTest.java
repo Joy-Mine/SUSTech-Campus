@@ -40,6 +40,7 @@ public class BuildingServiceTest {
             building.setName("test_building_" + i);
             building.setDetails("details_" + i);
             building.setDescription("description_" + i);
+            building.setTag("tag_" + i);
             building.setLatitude(i);
             building.setLongitude(-i);
             Long buildingId = this.buildingService.addBuilding(
