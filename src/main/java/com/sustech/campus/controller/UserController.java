@@ -73,6 +73,7 @@ public class UserController {
         }
     }
 
+    //deprecated
     @PostMapping( "/adminlogin")
     public ResponseEntity<Map<String, Object>> adminlogin(@RequestBody User user){
         user.setType(UserType.ADMIN);
@@ -127,9 +128,10 @@ public class UserController {
         List<User> allUsers=userService.getAllUsers();
         List<String[]> neededUsers=new ArrayList<>();
         for(User user : allUsers){
-            String[] tmp=new String[2];
+            String[] tmp=new String[3];
             tmp[0]=user.getName();
             tmp[1]=user.getPassword();
+            tmp[2]=user.getType().toString();
             neededUsers.add(tmp);
         }
         if (allUsers!=null) {
