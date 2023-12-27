@@ -217,4 +217,20 @@ public class BuildingServiceTest {
             );
         }
     }
+
+    @Test
+    @Order(12)
+    void testChangeBuildingTag() {
+        for (Building building : this.buildings) {
+            building.setTag(building.getTag() + "_new");
+            assertTrue(this.buildingService.changeBuildingTag(
+                    building.getId(),
+                    building.getTag()
+            ));
+            assertEquals(
+                    this.buildingService.getBuildingById(building.getId()).getTag(),
+                    building.getTag()
+            );
+        }
+    }
 }

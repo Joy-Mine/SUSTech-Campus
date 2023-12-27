@@ -77,6 +77,13 @@ public interface BuildingService {
 
     /**
      * @param buildingId
+     * @param newTag
+     * @return false if failed to change the tag, otherwise true
+     */
+    boolean changeBuildingTag(Long buildingId, String newTag);
+
+    /**
+     * @param buildingId
      * @return null if the building does not exist, otherwise, a List that contains all photos of the building
      */
     List<BuildingPhoto> listBuildingPhotos(Long buildingId);

@@ -121,6 +121,17 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
+    public boolean changeBuildingTag(Long buildingId, String newTag) {
+        Building building = this.getBuildingById(buildingId);
+        if (building == null) {
+            return false;
+        }
+        building.setTag(newTag);
+        this.buildingMapper.updateById(building);
+        return true;
+    }
+
+    @Override
     public List<BuildingPhoto> listBuildingPhotos(Long buildingId) {
         if (!this.buildingExists(buildingId)) {
             return null;
