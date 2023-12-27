@@ -14,9 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/user")
@@ -149,17 +146,15 @@ public class UserController {
 
     @Access(level = UserType.ADMIN)
     @PostMapping("/mute")
-    public boolean mute(@RequestBody JsonObject jsonName){
-        String username=jsonName.get("name").getAsString();
+    public boolean mute(@RequestBody User user){
+        String username=user.getName();
         return userService.muteUser(username);
     }
 
     @Access(level = UserType.ADMIN)
     @PostMapping("/unmute")
-    public boolean unmute(@RequestBody JsonObject jsonName){
-        System.out.println("-------------------------------------------");
-        System.out.println(jsonName);
-        String username=jsonName.get("name").getAsString();
+    public boolean unmute(@RequestBody User user){
+        String username=user.getName();
         return userService.unmuteUser(username);
     }
 }
