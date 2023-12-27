@@ -3,6 +3,8 @@ package com.sustech.campus.entity;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
+import java.util.List;
 
 @TableName("goods")
 public class Goods {
@@ -19,6 +21,9 @@ public class Goods {
     private Integer quantity;
 
     private Boolean hidden;
+
+    @TableField(exist = false)
+    private List<GoodsPhoto> photos;
 
     public Long getId() {
         return id;
@@ -68,6 +73,22 @@ public class Goods {
         this.hidden = hidden;
     }
 
+    public List<GoodsPhoto> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<GoodsPhoto> photos) {
+        this.photos = photos;
+    }
+
+    private boolean photosEquals(Goods other) {
+        if (this.photos == null || other.photos == null) {
+            return this.photos == other.photos;
+        }
+        return this.photos.stream().sorted(Comparator.comparing(GoodsPhoto::getId)).toList()
+                .equals(other.photos.stream().sorted(Comparator.comparing(GoodsPhoto::getId)).toList());
+    }
+
     @Override
     public String toString() {
         return "Goods{" +
@@ -77,6 +98,7 @@ public class Goods {
                 ", price=" + price +
                 ", quantity=" + quantity +
                 ", hidden=" + hidden +
+                ", photos=" + photos +
                 '}';
     }
 
@@ -91,6 +113,7 @@ public class Goods {
                 && this.storeId.equals(other.storeId)
                 && this.price.compareTo(other.price) == 0
                 && this.quantity.equals(other.quantity)
-                && this.hidden.equals(other.hidden);
+                && this.hidden.equals(other.hidden)
+                && this.photosEquals(other);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -55,11 +56,15 @@ public class StoreController {
         }
     }
 
-    @Access(level = UserType.ADMIN)
+    @Access(level = UserType.USER)
     @GetMapping("/goods/{storeId}")
     public ResponseEntity<List<Goods>> listAllGoods(@PathVariable Long storeId) {
         List<Goods> goods = storeService.listAllGoods(storeId);
         if (goods != null && !goods.isEmpty()) {
+            goods = goods.stream()
+                    .filter(Objects::nonNull)
+                    .peek(e -> e.setPhotos(storeService.listAllGoodsPhotos(e.getId())))
+                    .toList();
             return ResponseEntity.ok(goods);
         } else {
             return ResponseEntity.notFound().build();
