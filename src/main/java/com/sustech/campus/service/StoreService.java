@@ -154,7 +154,7 @@ public interface StoreService {
      * @param goodsId
      * @return null if goods with the given id do not exist, otherwise, all photos of such goods
      */
-    List<GoodsPhoto> listAllGoodsPhotos(Long goodsId);
+    List<GoodsPhoto> listAllPhotosOfaGood(Long goodsId);
 
     /**
      * @param photoId

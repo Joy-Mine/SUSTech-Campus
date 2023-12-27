@@ -63,7 +63,7 @@ public class StoreController {
         if (goods != null && !goods.isEmpty()) {
             goods = goods.stream()
                     .filter(Objects::nonNull)
-                    .peek(e -> e.setPhotos(storeService.listAllGoodsPhotos(e.getId())))
+                    .peek(e -> e.setPhotos(storeService.listAllPhotosOfaGood(e.getId())))
                     .toList();
             return ResponseEntity.ok(goods);
         } else {
@@ -128,8 +128,8 @@ public class StoreController {
 
     @Access(level = UserType.ADMIN)
     @GetMapping("/goods/photo/{goodsId}")
-    public ResponseEntity<List<GoodsPhoto>> listAllGoodsPhotos(@PathVariable Long goodsId) {
-        List<GoodsPhoto> photos = storeService.listAllGoodsPhotos(goodsId);
+    public ResponseEntity<List<GoodsPhoto>> listAllPhotosOfaGood(@PathVariable Long goodsId) {
+        List<GoodsPhoto> photos = storeService.listAllPhotosOfaGood(goodsId);
         if (photos != null && !photos.isEmpty()) {
             return ResponseEntity.ok(photos);
         } else {

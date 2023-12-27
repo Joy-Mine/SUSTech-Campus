@@ -164,7 +164,7 @@ public class StoreServiceImpl implements StoreService {
         if (!this.goodsExists(goodsId, true)) {
             return false;
         }
-        List<GoodsPhoto> photos = this.listAllGoodsPhotos(goodsId);
+        List<GoodsPhoto> photos = this.listAllPhotosOfaGood(goodsId);
         for (GoodsPhoto photo : photos) {
             this.deleteGoodsPhoto(photo.getId());
         }
@@ -218,7 +218,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public List<GoodsPhoto> listAllGoodsPhotos(Long goodsId) {
+    public List<GoodsPhoto> listAllPhotosOfaGood(Long goodsId) {
         if (!this.goodsExists(goodsId, true)) {
             return null;
         }
