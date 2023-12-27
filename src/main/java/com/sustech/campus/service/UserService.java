@@ -82,4 +82,8 @@ public interface UserService {
     String changeToken(Long userId);
 
     List<User> getAllUsers();
+
+    boolean muteUser(String username);
+
+    boolean unmuteUser(String username);
 }

@@ -128,6 +128,8 @@ public class UserController {
         List<User> allUsers=userService.getAllUsers();
         List<String[]> neededUsers=new ArrayList<>();
         for(User user : allUsers){
+            if(user.getType()==UserType.ADMIN)
+                continue;
             String[] tmp=new String[3];
             tmp[0]=user.getName();
             tmp[1]=user.getPassword();
@@ -139,5 +141,17 @@ public class UserController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @Access(level = UserType.ADMIN)
+    @PostMapping("/muted/{username}")
+    public boolean muted(@PathVariable String username){
+        return userService.muteUser(username);
+    }
+
+    @Access(level = UserType.ADMIN)
+    @PostMapping("/muted/{username}")
+    public boolean unmuted(@PathVariable String username){
+        return userService.unmuteUser(username);
     }
 }

@@ -140,4 +140,26 @@ public class UserServiceImpl implements UserService {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         return userMapper.selectList(queryWrapper);
     }
+
+    @Override
+    public boolean muteUser(String username) {
+        User user = this.getUserByName(username);
+        if (user == null) {
+            return false;
+        }
+        user.setType(UserType.MUTED);
+        this.userMapper.updateById(user);
+        return true;
+    }
+
+    @Override
+    public boolean unmuteUser(String username) {
+        User user = this.getUserByName(username);
+        if (user == null) {
+            return false;
+        }
+        user.setType(UserType.USER);
+        this.userMapper.updateById(user);
+        return true;
+    }
 }
