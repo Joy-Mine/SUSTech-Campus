@@ -58,15 +58,29 @@ public interface StoreService {
 
     /**
      * @param storeId
-     * @return null if such store does not exist, otherwise goods in the store with the given name
+     * @return null if such store does not exist, otherwise not hidden goods in the store with the given id
      */
     List<Goods> listAllGoods(Long storeId);
 
     /**
+     * @param storeId
+     * @param includeHidden
+     * @return null if such store does not exist, otherwise goods in the store with the given id
+     */
+    List<Goods> listAllGoods(Long storeId, boolean includeHidden);
+
+    /**
      * @param goodsId
-     * @return null if such goods do not exist, otherwise, the goods with the given id
+     * @return null if such goods do not exist or is hidden, otherwise, the goods with the given id
      */
     Goods getGoodsById(Long goodsId);
+
+    /**
+     * @param goodsId
+     * @param includeHidden
+     * @return null if such goods do not exist, otherwise, the goods with the given id
+     */
+    Goods getGoodsById(Long goodsId, boolean includeHidden);
 
     /**
      * @param storeId
@@ -83,6 +97,21 @@ public interface StoreService {
     boolean goodsExists(Long goodsId);
 
     /**
+     * @param goodsId
+     * @param includeHidden
+     * @return whether such goods exist
+     */
+    boolean goodsExists(Long goodsId, boolean includeHidden);
+
+    /**
+     * this is fake deletion
+     * @param goodsId
+     * @return whether deletion succeed
+     */
+    boolean fakeDeleteGoods(Long goodsId);
+
+    /**
+     * only used in testing
      * @param goodsId
      * @return whether deletion succeed
      */

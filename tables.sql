@@ -111,6 +111,7 @@ create table goods
     storeId  bigint        not null,
     price    numeric(8, 2) not null,
     quantity int           not null,
+    hidden   boolean       not null,
     primary key (id),
     constraint foreign key (storeId) references store (id),
     unique (storeId, name)

@@ -96,6 +96,7 @@ public class OrderServiceTest {
                     goods.getQuantity()
             );
             goods.setId(goodsId);
+            goods.setHidden(false);
             this.goodsList.add(goods);
             availableQuantities[i] = goods.getQuantity();
         }
