@@ -146,14 +146,14 @@ public class UserController {
     }
 
     @Access(level = UserType.ADMIN)
-    @GetMapping("/mute/{username}")
-    public boolean mute(@PathVariable String username){
+    @GetMapping("/mute")
+    public boolean mute(@RequestBody String username){
         return userService.muteUser(username);
     }
 
     @Access(level = UserType.ADMIN)
-    @GetMapping("/unmute/{username}")
-    public boolean unmute(@PathVariable String username){
+    @GetMapping("/unmute")
+    public boolean unmute(@RequestBody String username){
         return userService.unmuteUser(username);
     }
 }
