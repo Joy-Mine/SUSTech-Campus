@@ -4,6 +4,7 @@ import com.sustech.campus.entity.User;
 import com.sustech.campus.enums.UserType;
 import com.sustech.campus.interceptor.Access;
 import com.sustech.campus.service.UserService;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Access(level = UserType.ADMIN)
     @GetMapping("/{username}")
     public ResponseEntity<User> getUserByName(@PathVariable String username) {
         User user = userService.getUserByName(username);
@@ -144,14 +146,14 @@ public class UserController {
     }
 
     @Access(level = UserType.ADMIN)
-    @PostMapping("/muted/{username}")
-    public boolean muted(@PathVariable String username){
+    @GetMapping("/mute/{username}")
+    public boolean mute(@PathVariable String username){
         return userService.muteUser(username);
     }
 
     @Access(level = UserType.ADMIN)
-    @PostMapping("/muted/{username}")
-    public boolean unmuted(@PathVariable String username){
+    @GetMapping("/unmute/{username}")
+    public boolean unmute(@PathVariable String username){
         return userService.unmuteUser(username);
     }
 }
