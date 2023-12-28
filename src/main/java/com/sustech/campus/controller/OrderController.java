@@ -79,8 +79,8 @@ public class OrderController {
     }
 
     @Access(level = UserType.ADMIN)
-    @GetMapping( "/statistics")
-    public ResponseEntity<String> listOrders() throws JsonProcessingException {
+    @GetMapping( "/statistics/{storeId}")
+    public ResponseEntity<String> listOrders(@PathVariable Long storeId) throws JsonProcessingException {
         List<Goods> statistics = this.orderService.listAllOrders(null, null, null).stream()
                 .map(Order::getId)
                 .map(this.orderService::getFullOrderById)
@@ -95,7 +95,7 @@ public class OrderController {
                     goods.setQuantity(e.getValue());
                     return goods;
                 })
-//                .filter(e -> e.getStoreId().equals(1L))
+                .filter(e -> storeId == null || e.getStoreId().equals(storeId))
                 .peek(e -> e.setId(null))
                 .peek(e -> e.setPhotos(null))
                 .peek(e -> e.setStoreId(null))

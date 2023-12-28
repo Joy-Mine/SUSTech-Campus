@@ -6,6 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.sustech.campus.enums.CommentStatus;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 @TableName("comment")
 public class Comment {
     @TableId(type = IdType.ASSIGN_ID)
@@ -20,6 +24,14 @@ public class Comment {
     private Long buildingId;
 
     private CommentStatus status;
+
+    private Long time;
+
+    @TableField(exist = false)
+    private List<CommentPhoto> photos;
+
+    @TableField(exist = false)
+    private String commenterName;
 
     public Long getId() {
         return id;
@@ -61,6 +73,35 @@ public class Comment {
         this.status = status;
     }
 
+    public List<CommentPhoto> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<CommentPhoto> photos) {
+        this.photos = photos;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
+    public String getStringTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(new Date(this.time));
+    }
+
+    public void setCommenterName(String commenterName) {
+        this.commenterName = commenterName;
+    }
+
+    public String getCommenterName() {
+        return commenterName;
+    }
+
     @Override
     public String toString() {
         return "Comment{" +
@@ -69,6 +110,7 @@ public class Comment {
                 ", commenterId=" + commenterId +
                 ", buildingId=" + buildingId +
                 ", status=" + status +
+                ", time=" + time +
                 '}';
     }
 
@@ -82,6 +124,7 @@ public class Comment {
                 && this.buildingId.equals(other.buildingId)
                 && this.commenterId.equals(other.commenterId)
                 && this.content.equals(other.content)
-                && this.status == other.status;
+                && this.status == other.status
+                && this.time.equals(other.time);
     }
 }

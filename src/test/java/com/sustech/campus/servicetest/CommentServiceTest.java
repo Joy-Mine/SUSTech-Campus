@@ -95,13 +95,14 @@ public class CommentServiceTest {
             comment.setStatus(CommentStatus.WAITING);
             comment.setContent("");
             this.comments.add(comment);
-            Long commentId = this.commentService.addComment(
+            Comment result = this.commentService.addComment(
                     comment.getBuildingId(),
                     comment.getCommenterId(),
                     comment.getContent()
             );
-            assertNotNull(commentId);
-            comment.setId(commentId);
+            assertNotNull(result);
+            comment.setId(result.getId());
+            comment.setTime(result.getTime());
         }
         for (int i = 0; i < numCommentPhotos; ++i) {
             CommentPhoto photo = new CommentPhoto();

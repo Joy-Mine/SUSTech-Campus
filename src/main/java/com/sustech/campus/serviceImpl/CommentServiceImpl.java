@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Long addComment(Long buildingId, Long commenterId, String content) {
+    public Comment addComment(Long buildingId, Long commenterId, String content) {
         if (this.buildingMapper.selectById(buildingId) == null || this.userMapper.selectById(commenterId) == null) {
             return null;
         }
@@ -41,8 +41,9 @@ public class CommentServiceImpl implements CommentService {
         comment.setCommenterId(commenterId);
         comment.setContent(content);
         comment.setStatus(CommentStatus.WAITING);
+        comment.setTime(System.currentTimeMillis());
         this.commentMapper.insert(comment);
-        return comment.getId();
+        return comment;
     }
 
     @Override
