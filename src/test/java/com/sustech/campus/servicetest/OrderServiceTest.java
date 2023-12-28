@@ -145,8 +145,7 @@ public class OrderServiceTest {
             Order result = orderService.createOrder(
                     order.getPurchaser(),
                     order.getItems().stream().map(OrderItem::getGoodsId).toList(),
-                    order.getItems().stream().map(OrderItem::getAmount).toList(),
-                    order.getItems().stream().map(OrderItem::getPrice).toList()
+                    order.getItems().stream().map(OrderItem::getAmount).toList()
             );
             assertNotNull(result.getId());
             assertNotNull(result.getTime());

@@ -12,7 +12,7 @@ public interface OrderService {
      * @param amounts
      * @return null if failed to create the order, otherwise  the order
      */
-    Order createOrder(Long purchaser, List<Long> goodsIds, List<Integer> amounts, List<BigDecimal> prices);
+    Order createOrder(Long purchaser, List<Long> goodsIds, List<Integer> amounts);
 
     /**
      * @param purchaser only return the orders of the given purchaser, pass null to disable this filter

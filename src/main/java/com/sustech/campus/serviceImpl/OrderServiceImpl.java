@@ -40,19 +40,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackForClassName = {"Exception", "RuntimeException"})
-    public Order createOrder(Long purchaser, List<Long> goodsIds, List<Integer> amounts, List<BigDecimal> prices) {
-        if (goodsIds.size() != amounts.size() || goodsIds.size() != prices.size()) {
+    public Order createOrder(Long purchaser, List<Long> goodsIds, List<Integer> amounts) {
+        if (goodsIds.size() != amounts.size()) {
             return null;
         }
         if (this.userMapper.selectById(purchaser) == null) {
             return null;
         }
+        List<BigDecimal> prices = new ArrayList<>();
         for (int i = 0; i < goodsIds.size(); ++i) {
             Goods goods = this.goodsMapper.selectById(goodsIds.get(i));
-            if (goods == null || goods.getQuantity().compareTo(amounts.get(i)) < 0
-                    || goods.getPrice().compareTo(prices.get(i)) != 0) {
+            if (goods == null || goods.getQuantity().compareTo(amounts.get(i)) < 0) {
                 return null;
             }
+            prices.add(goods.getPrice());
         }
         Order order = new Order();
         order.setPurchaser(purchaser);
