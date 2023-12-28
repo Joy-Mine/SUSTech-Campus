@@ -1,8 +1,11 @@
 package com.sustech.campus.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.util.List;
 
 @TableName("building")
 public class Building {
@@ -16,6 +19,15 @@ public class Building {
     private String description, details;
 
     private double latitude, longitude;
+
+    @TableField(exist = false)
+    private String coverPath;
+
+    public String getCoverPath(){return coverPath;}
+
+    public void setCoverPath(String coverPath){
+        this.coverPath=coverPath;
+    }
 
     public Long getId() {
         return id;

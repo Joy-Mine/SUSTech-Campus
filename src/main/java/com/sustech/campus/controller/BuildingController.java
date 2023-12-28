@@ -6,10 +6,14 @@ import com.sustech.campus.enums.UserType;
 import com.sustech.campus.interceptor.Access;
 import com.sustech.campus.service.BuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +32,19 @@ public class BuildingController {
     @GetMapping("/")
     public ResponseEntity<List<Building>> getAllBuildings() {
         List<Building> buildings = buildingService.listAllBuildings();
+        for(Building building : buildings){
+            String path="localhost:8082/building/image/"+buildingService.listBuildingPhotos(building.getId()).get(0).getPath();
+            building.setCoverPath(path);
+        }
         return ResponseEntity.ok(buildings);
+    }
+
+    @GetMapping("/image/{subpath}")
+    public @ResponseBody byte[] getImage(@PathVariable String subpath) throws IOException {
+        String path="images/"+subpath;
+//        String path=uglypath.split("building/")[1];
+        Resource image = new ClassPathResource(path);
+        return Files.readAllBytes(image.getFile().toPath());
     }
 
     @GetMapping("/buildingCover")

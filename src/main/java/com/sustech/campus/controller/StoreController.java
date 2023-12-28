@@ -9,12 +9,17 @@ import com.sustech.campus.enums.UserType;
 import com.sustech.campus.interceptor.Access;
 import com.sustech.campus.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,6 +40,8 @@ public class StoreController {
         List<Store> stores = storeService.listAllStores();
         return ResponseEntity.ok(stores);
     }
+
+
 
     @Access(level = UserType.ADMIN)
     @PostMapping("/add")
@@ -83,6 +90,20 @@ public class StoreController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/image/{subpath}")
+    public @ResponseBody byte[] getImage(@PathVariable String subpath) throws IOException {
+        String path="images/"+subpath;
+        Resource image = new ClassPathResource(path);
+        return Files.readAllBytes(image.getFile().toPath());
+    }
+
+//    @GetMapping("/image2")
+//    public ResponseEntity<byte[]> getImageAsResponseEntity() throws IOException {
+//        Resource image = new ClassPathResource("static/image.jpg");
+//        byte[] imageContent = Files.readAllBytes(image.getFile().toPath());
+//        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageContent);
+//    }
 
     @Access(level = UserType.ADMIN)
     @PostMapping("/goods/add")
