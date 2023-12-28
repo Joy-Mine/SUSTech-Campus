@@ -171,6 +171,53 @@ public class BuildingController {
         }
     }
 
+//    @Access(level = UserType.ADMIN)
+//    @PostMapping("/addp")
+//    public ResponseEntity<String> addBuildingWithPhoto(MultipartHttpServletRequest request) {
+//        Long buildingId = buildingService.addBuilding(building.getName(), building.getTag(), building.getDescription(), building.getDetails(), building.getLatitude(), building.getLongitude());
+//        if (buildingId != null) {
+//            return ResponseEntity.ok("Building added successfully.");
+//        } else {
+//            return ResponseEntity.badRequest().body("Building already exists.");
+//        }
+//    }
+    @PostMapping("/addBuilding")
+    public String addBuilding(
+            @RequestParam("name") String name,
+            @RequestParam("tag") String tag,
+            @RequestParam("description") String description,
+            @RequestParam("details") String details,
+            @RequestParam("latitude") Double latitude,
+            @RequestParam("longitude") Double longitude,
+            @RequestParam("file") MultipartFile file) {
+        System.out.println("Received data - Name: " + name + ", Tag: " + tag + ", Description: " + description
+                + ", Details: " + details + ", Latitude: " + latitude + ", Longitude: " + longitude);
+        System.out.println(file);
+        if (!file.isEmpty()) {
+            try {
+                saveFile(IMAGE_FOLDER, file.getOriginalFilename(), file);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "Failed to upload the file due to " + e.getMessage();
+            }
+        } else {
+            return "No file uploaded";
+        }
+        return "Building added successfully with the name: " + name;
+    }
+    private void saveFile(String uploadDir, String fileName, MultipartFile file) throws IOException {
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        try {
+            Path filePath = uploadPath.resolve(fileName);
+            file.transferTo(filePath);
+        } catch (IOException e) {
+            throw new IOException("Could not save file: " + fileName, e);
+        }
+    }
+
     @Access(level = UserType.ADMIN)
     @PostMapping("/edit")
     public ResponseEntity<String> editBuilding(@RequestBody Building building) {
