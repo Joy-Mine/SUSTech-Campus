@@ -62,7 +62,7 @@ public class BuildingController {
 
             List<BuildingPhoto> photos = buildingService.listBuildingPhotos(building.getId());
             if (photos != null && !photos.isEmpty()) {
-                cover.setPath(photos.get(0).getPath());
+                cover.setPath("localhost:8082/building/image/"+photos.get(0).getPath());
             }
             buildingCovers.add(cover);
         }
@@ -82,6 +82,17 @@ public class BuildingController {
     @Access(level = UserType.ADMIN)
     @PostMapping("/add")
     public ResponseEntity<String> addBuilding(@RequestBody Building building) {
+        Long buildingId = buildingService.addBuilding(building.getName(), building.getTag(), building.getDescription(), building.getDetails(), building.getLatitude(), building.getLongitude());
+        if (buildingId != null) {
+            return ResponseEntity.ok("Building added successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("Building already exists.");
+        }
+    }
+
+    @Access(level = UserType.ADMIN)
+    @PostMapping("/edit")
+    public ResponseEntity<String> editBuilding(@RequestBody Building building) {
         Long buildingId = buildingService.addBuilding(building.getName(), building.getTag(), building.getDescription(), building.getDetails(), building.getLatitude(), building.getLongitude());
         if (buildingId != null) {
             return ResponseEntity.ok("Building added successfully.");
