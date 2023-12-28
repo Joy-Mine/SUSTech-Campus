@@ -55,8 +55,7 @@ public class BuildingController {
         return ResponseEntity.ok(buildings);
     }
 
-    private static final String IMAGE_FOLDER = "/images";
-
+    private static final String IMAGE_FOLDER = "/images/";
 //    @PostMapping("/upload")
 //    public String uploadImage(@RequestParam("image") MultipartFile imageFile) {
 //        // 确保上传文件不为空
@@ -89,7 +88,7 @@ public class BuildingController {
             if (file != null && !file.isEmpty()) {
                 try {
                     String originalFileName = file.getOriginalFilename();
-                    Path path = Paths.get(IMAGE_FOLDER + originalFileName);
+                    Path path = Paths.get(originalFileName);
                     if (!Files.exists(path)) {
                         Files.createDirectories(path.getParent());
                     }
@@ -120,7 +119,7 @@ public class BuildingController {
     }
     @GetMapping("/image/{subpath}")
     public ResponseEntity<byte[]> getImageAsResponseEntity(@PathVariable String subpath) throws IOException {
-        String path="images/"+subpath;
+        String path=IMAGE_FOLDER+subpath;
         Resource image = new ClassPathResource(path);
         byte[] imageContent = Files.readAllBytes(image.getFile().toPath());
         String fileExtension = getFileExtension(subpath);
@@ -188,14 +187,15 @@ public class BuildingController {
             try {
 //                saveFile(IMAGE_FOLDER, file.getOriginalFilename(), file);
                 String originalFileName = file.getOriginalFilename();
-                Path path = Paths.get(IMAGE_FOLDER + originalFileName);
-                if (!Files.exists(path)) {
-                    Files.createDirectories(path.getParent());
-                }
-                Files.copy(file.getInputStream(), path);
+//                Path path = Paths.get(originalFileName);
+                Path filepath = Paths.get(IMAGE_FOLDER, originalFileName); // 构建文件保存路径
+                // 确保目标目录存在
+                Files.createDirectories(filepath.getParent());
+                // 保存文件
+                file.transferTo(filepath);
 
                 Long buildingId =buildingService.addBuilding(name,tag,description,details,latitude,longitude);
-                buildingService.addBuildingPhoto(buildingId,path.toString());
+                buildingService.addBuildingPhoto(buildingId,originalFileName);
 
                 return "Building added successfully with the name: " + name;
             } catch (IOException e) {
@@ -205,7 +205,6 @@ public class BuildingController {
         } else {
             return "No file uploaded";
         }
-//        return "Building added successfully with the name: " + name;
     }
     private void saveFile(String uploadDir, String fileName, MultipartFile file) throws IOException {
         Path uploadPath = Paths.get(uploadDir);
