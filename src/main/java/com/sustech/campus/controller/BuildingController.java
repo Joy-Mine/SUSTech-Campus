@@ -9,13 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -23,6 +26,18 @@ import java.util.List;
 public class BuildingController {
 
     private final BuildingService buildingService;
+
+    private static final Map<String, MediaType> MEDIA_TYPE_MAP;
+
+    static {
+        // Initialize the media type map
+        MEDIA_TYPE_MAP = new HashMap<>();
+        MEDIA_TYPE_MAP.put("png", MediaType.IMAGE_PNG);
+        MEDIA_TYPE_MAP.put("jpg", MediaType.IMAGE_JPEG);
+        MEDIA_TYPE_MAP.put("jpeg", MediaType.IMAGE_JPEG);
+        MEDIA_TYPE_MAP.put("gif", MediaType.IMAGE_GIF);
+        // Add more mappings as necessary
+    }
 
     @Autowired
     public BuildingController(BuildingService buildingService) {
@@ -39,12 +54,28 @@ public class BuildingController {
         return ResponseEntity.ok(buildings);
     }
 
+//    @GetMapping("/image/{subpath}")
+//    public @ResponseBody byte[] getImage(@PathVariable String subpath) throws IOException {
+//        String path="images/"+subpath;
+////        String path=uglypath.split("building/")[1];
+//        Resource image = new ClassPathResource(path);
+//        return Files.readAllBytes(image.getFile().toPath());
+//    }
+    private String getFileExtension(String filename) {
+        if (filename.contains(".")) {
+            return filename.substring(filename.lastIndexOf(".") + 1);
+        } else {
+            return ""; // No extension found
+        }
+    }
     @GetMapping("/image/{subpath}")
-    public @ResponseBody byte[] getImage(@PathVariable String subpath) throws IOException {
+    public ResponseEntity<byte[]> getImageAsResponseEntity(@PathVariable String subpath) throws IOException {
         String path="images/"+subpath;
-//        String path=uglypath.split("building/")[1];
         Resource image = new ClassPathResource(path);
-        return Files.readAllBytes(image.getFile().toPath());
+        byte[] imageContent = Files.readAllBytes(image.getFile().toPath());
+        String fileExtension = getFileExtension(subpath);
+        MediaType mediaType = MEDIA_TYPE_MAP.getOrDefault(fileExtension.toLowerCase(), MediaType.APPLICATION_OCTET_STREAM);
+        return ResponseEntity.ok().contentType(mediaType).body(imageContent);
     }
 
     @GetMapping("/buildingCover")
