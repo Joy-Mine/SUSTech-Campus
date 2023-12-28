@@ -171,16 +171,7 @@ public class BuildingController {
         }
     }
 
-//    @Access(level = UserType.ADMIN)
-//    @PostMapping("/addp")
-//    public ResponseEntity<String> addBuildingWithPhoto(MultipartHttpServletRequest request) {
-//        Long buildingId = buildingService.addBuilding(building.getName(), building.getTag(), building.getDescription(), building.getDetails(), building.getLatitude(), building.getLongitude());
-//        if (buildingId != null) {
-//            return ResponseEntity.ok("Building added successfully.");
-//        } else {
-//            return ResponseEntity.badRequest().body("Building already exists.");
-//        }
-//    }
+    @Access(level = UserType.ADMIN)
     @PostMapping("/addBuilding")
     public String addBuilding(
             @RequestParam("name") String name,
@@ -193,9 +184,20 @@ public class BuildingController {
         System.out.println("Received data - Name: " + name + ", Tag: " + tag + ", Description: " + description
                 + ", Details: " + details + ", Latitude: " + latitude + ", Longitude: " + longitude);
         System.out.println(file);
-        if (!file.isEmpty()) {
+        if (file!=null && !file.isEmpty()) {
             try {
-                saveFile(IMAGE_FOLDER, file.getOriginalFilename(), file);
+//                saveFile(IMAGE_FOLDER, file.getOriginalFilename(), file);
+                String originalFileName = file.getOriginalFilename();
+                Path path = Paths.get(IMAGE_FOLDER + originalFileName);
+                if (!Files.exists(path)) {
+                    Files.createDirectories(path.getParent());
+                }
+                Files.copy(file.getInputStream(), path);
+
+                Long buildingId =buildingService.addBuilding(name,tag,description,details,latitude,longitude);
+                buildingService.addBuildingPhoto(buildingId,path.toString());
+
+                return "Building added successfully with the name: " + name;
             } catch (IOException e) {
                 e.printStackTrace();
                 return "Failed to upload the file due to " + e.getMessage();
@@ -203,7 +205,7 @@ public class BuildingController {
         } else {
             return "No file uploaded";
         }
-        return "Building added successfully with the name: " + name;
+//        return "Building added successfully with the name: " + name;
     }
     private void saveFile(String uploadDir, String fileName, MultipartFile file) throws IOException {
         Path uploadPath = Paths.get(uploadDir);
