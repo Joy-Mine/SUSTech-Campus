@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -91,19 +93,33 @@ public class StoreController {
         }
     }
 
+    private static final Map<String, MediaType> MEDIA_TYPE_MAP;
+
+    static {
+        // Initialize the media type map
+        MEDIA_TYPE_MAP = new HashMap<>();
+        MEDIA_TYPE_MAP.put("png", MediaType.IMAGE_PNG);
+        MEDIA_TYPE_MAP.put("jpg", MediaType.IMAGE_JPEG);
+        MEDIA_TYPE_MAP.put("jpeg", MediaType.IMAGE_JPEG);
+        MEDIA_TYPE_MAP.put("gif", MediaType.IMAGE_GIF);
+        // Add more mappings as necessary
+    }
+    private String getFileExtension(String filename) {
+        if (filename.contains(".")) {
+            return filename.substring(filename.lastIndexOf(".") + 1);
+        } else {
+            return ""; // No extension found
+        }
+    }
     @GetMapping("/image/{subpath}")
-    public @ResponseBody byte[] getImage(@PathVariable String subpath) throws IOException {
+    public ResponseEntity<byte[]> getImageAsResponseEntity(@PathVariable String subpath) throws IOException {
         String path="images/"+subpath;
         Resource image = new ClassPathResource(path);
-        return Files.readAllBytes(image.getFile().toPath());
+        byte[] imageContent = Files.readAllBytes(image.getFile().toPath());
+        String fileExtension = getFileExtension(subpath);
+        MediaType mediaType = MEDIA_TYPE_MAP.getOrDefault(fileExtension.toLowerCase(), MediaType.APPLICATION_OCTET_STREAM);
+        return ResponseEntity.ok().contentType(mediaType).body(imageContent);
     }
-
-//    @GetMapping("/image2")
-//    public ResponseEntity<byte[]> getImageAsResponseEntity() throws IOException {
-//        Resource image = new ClassPathResource("static/image.jpg");
-//        byte[] imageContent = Files.readAllBytes(image.getFile().toPath());
-//        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageContent);
-//    }
 
     @Access(level = UserType.ADMIN)
     @PostMapping("/goods/add")

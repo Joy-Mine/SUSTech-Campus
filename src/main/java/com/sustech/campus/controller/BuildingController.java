@@ -12,13 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -54,13 +55,62 @@ public class BuildingController {
         return ResponseEntity.ok(buildings);
     }
 
-//    @GetMapping("/image/{subpath}")
-//    public @ResponseBody byte[] getImage(@PathVariable String subpath) throws IOException {
-//        String path="images/"+subpath;
-////        String path=uglypath.split("building/")[1];
-//        Resource image = new ClassPathResource(path);
-//        return Files.readAllBytes(image.getFile().toPath());
+    private static final String IMAGE_FOLDER = "/images";
+
+//    @PostMapping("/upload")
+//    public String uploadImage(@RequestParam("image") MultipartFile imageFile) {
+//        // 确保上传文件不为空
+//        if (imageFile.isEmpty()) {
+//            return "The file is empty.";
+//        }
+//        try {
+//            // 获取文件名并构建本地文件路径
+//            String fileName = imageFile.getOriginalFilename();
+//            Path path = Paths.get(IMAGE_FOLDER + fileName);
+//            // 确保存储路径存在
+//            if (!Files.exists(path)) {
+//                Files.createDirectories(path.getParent());
+//            }
+//            // 将上传的文件写入到指定的文件中
+//            Files.copy(imageFile.getInputStream(), path);
+//            return "You successfully uploaded " + fileName + "!";
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return "Failed to upload " + imageFile.getOriginalFilename() + " due to " + e.getMessage();
+//        }
 //    }
+    @Access(level = UserType.ADMIN)
+    @PostMapping("/uploadimage")
+    public String uploadImage(MultipartHttpServletRequest request) {
+        Iterator<String> fileNames = request.getFileNames();
+        while (fileNames.hasNext()) {
+            String fileName = fileNames.next();
+            MultipartFile file = request.getFile(fileName);
+            if (file != null && !file.isEmpty()) {
+                try {
+                    String originalFileName = file.getOriginalFilename();
+                    Path path = Paths.get(IMAGE_FOLDER + originalFileName);
+                    if (!Files.exists(path)) {
+                        Files.createDirectories(path.getParent());
+                    }
+                    Files.copy(file.getInputStream(), path);
+
+                    Building building=new Building();
+                    BuildingPhoto buildingPhoto=new BuildingPhoto();
+                    buildingService.addBuildingPhoto(building.getId(),path.toString());
+
+                    return "Successfully uploaded " + originalFileName + "!";
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return "Failed to upload " + file.getOriginalFilename() + " due to " + e.getMessage();
+                }
+            } else {
+                return "The file is empty.";
+            }
+        }
+        return "No files were uploaded.";
+    }
+
     private String getFileExtension(String filename) {
         if (filename.contains(".")) {
             return filename.substring(filename.lastIndexOf(".") + 1);
