@@ -82,6 +82,7 @@ create table comment
     commenterId bigint not null,
     content     text   not null,
     status      int    not null,
+    time        bigint not null,
     primary key (id),
     constraint foreign key (buildingId) references building (id),
     constraint foreign key (commenterId) references `user` (id)

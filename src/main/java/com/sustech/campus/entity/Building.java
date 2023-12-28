@@ -61,7 +61,6 @@ public class Building {
         this.description = description;
     }
 
-
     public String getDetails() {
         return details;
     }

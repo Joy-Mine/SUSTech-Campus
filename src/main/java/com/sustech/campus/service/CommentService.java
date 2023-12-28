@@ -11,9 +11,9 @@ public interface CommentService {
      * @param buildingId
      * @param commenterId
      * @param content
-     * @return null if failed to add such comment, otherwise the id of the comment
+     * @return null if failed to add such comment, otherwise the comment
      */
-    Long addComment(Long buildingId, Long commenterId, String content);
+    Comment addComment(Long buildingId, Long commenterId, String content);
 
     /**
      * @param commentId
