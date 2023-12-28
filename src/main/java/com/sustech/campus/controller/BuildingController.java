@@ -192,7 +192,8 @@ public class BuildingController {
                 // 确保目标目录存在
                 Files.createDirectories(filepath.getParent());
                 // 保存文件
-                file.transferTo(filepath);
+                Path abPath=Path.of("D:\\ProProject\\OOAD\\campus\\src\\main\\resources\\images\\"+originalFileName);
+                file.transferTo(abPath);
 
                 Long buildingId =buildingService.addBuilding(name,tag,description,details,latitude,longitude);
                 buildingService.addBuildingPhoto(buildingId,originalFileName);
