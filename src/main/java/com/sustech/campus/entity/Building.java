@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
-import java.util.List;
-
 @TableName("building")
 public class Building {
     @TableId(type = IdType.ASSIGN_ID)

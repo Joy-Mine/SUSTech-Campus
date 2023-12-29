@@ -61,8 +61,8 @@ public class OrderController {
     }
 
     @Access(level = UserType.USER)
-    @GetMapping( "/list")
-    public ResponseEntity<List<Order>> listOrders(HttpServletRequest request){
+    @GetMapping( "/list/{storeId}")
+    public ResponseEntity<List<Order>> listOrders(HttpServletRequest request, @PathVariable Long storeId){
         String token = request.getHeader("TOKEN");
         if (token == null) {
             return ResponseEntity.notFound().build();
@@ -74,6 +74,12 @@ public class OrderController {
         List<Order> orders = orderService.listAllOrders(user.getId(), null, null).stream()
                 .map(Order::getId)
                 .map(orderService::getFullOrderById)
+                .filter(
+                        e -> e.getItems().stream()
+                                .map(OrderItem::getGoodsId)
+                                .map(storeService::getGoodsById)
+                                .anyMatch(e1 -> e1.getStoreId().equals(storeId))
+                )
                 .toList();
         return ResponseEntity.ok(orders);
     }

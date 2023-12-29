@@ -79,6 +79,7 @@ public class StoreController {
                                     storeService.listAllPhotosOfaGood(e.getId()).stream()
                                             .peek(e1 -> e1.setGoodsId(null))
                                             .peek(e1 -> e1.setId(null))
+                                            .peek(e1 -> e1.setPath("localhost:8082/store/image/" + e1.getPath()))
                                             .toList()
                             )
                     )
