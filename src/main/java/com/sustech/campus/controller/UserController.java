@@ -50,6 +50,18 @@ public class UserController {
         }
     }
 
+    @PostMapping("/batchregister")
+    public ResponseEntity<List<String>> batchRegisterUser(@RequestParam List<User> batchUsers){
+        List<String> registeredUsersName=new ArrayList<>();
+        for(User user : batchUsers){
+            User responseUser = userService.registerUser(user.getName(), user.getPassword(), user.getType());
+            if(responseUser!=null){
+                registeredUsersName.add(responseUser.getName());
+            }
+        }
+        return ResponseEntity.ok(registeredUsersName);
+    }
+
     @PostMapping( "/userlogin")
     public ResponseEntity<Map<String, Object>> userlogin(@RequestBody User user){
         user.setType(UserType.USER);
