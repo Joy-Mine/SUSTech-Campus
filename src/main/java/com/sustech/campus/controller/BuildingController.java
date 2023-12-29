@@ -142,7 +142,7 @@ public class BuildingController {
 
             List<BuildingPhoto> photos = buildingService.listBuildingPhotos(building.getId());
             if (photos != null && !photos.isEmpty()) {
-                cover.setPath("localhost:8082/building/image/"+photos.get(0).getPath());
+                cover.setPath("http://localhost:8082/building/image/"+photos.get(0).getPath());
             }
             buildingCovers.add(cover);
         }
