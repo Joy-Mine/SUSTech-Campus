@@ -39,6 +39,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
+        System.out.println(user.getName()+user.getPassword()+user.getType());
         User responseUser = userService.registerUser(user.getName(), user.getPassword(), user.getType());
         if (responseUser != null) {
 //            return ResponseEntity.ok("user.getToken()");

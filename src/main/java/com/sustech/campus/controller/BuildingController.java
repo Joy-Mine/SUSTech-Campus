@@ -142,16 +142,17 @@ public class BuildingController {
 
             List<BuildingPhoto> photos = buildingService.listBuildingPhotos(building.getId());
             if (photos != null && !photos.isEmpty()) {
-                cover.setPath("localhost:8082/building/image/"+photos.get(0).getPath());
+                cover.setPath("http://localhost:8082/building/image/"+photos.get(0).getPath());
             }
             buildingCovers.add(cover);
         }
         return ResponseEntity.ok(buildingCovers);
     }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<Building> getBuildingByName(@PathVariable String name) {
-        Building building = buildingService.getBuildingByName(name);
+    @GetMapping("/{id}")
+    public ResponseEntity<Building> getBuildingByName(@PathVariable String id) {
+        Building building = buildingService.getBuildingById(Long.valueOf(id));
+        building.setCoverPath("http://localhost:8082/building/image/"+buildingService.listBuildingPhotos((building.getId())).get(0).getPath());
         if (building != null) {
             return ResponseEntity.ok(building);
         } else {
