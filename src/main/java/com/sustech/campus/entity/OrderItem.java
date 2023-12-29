@@ -2,10 +2,12 @@ package com.sustech.campus.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.math.BigDecimal;
 
 @TableName("order_item")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderItem {
     @TableField(value = "orderId")
     private Long orderId;

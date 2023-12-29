@@ -79,8 +79,24 @@ public class OrderController {
                                 .map(OrderItem::getGoodsId)
                                 .map(storeService::getGoodsById)
                                 .anyMatch(e1 -> e1.getStoreId().equals(storeId))
-                )
-                .toList();
+                ).peek(
+                        e -> e.setItems(
+                                e.getItems().stream()
+                                        .map(e1 -> {
+                                            OrderItem item = new OrderItem() {
+                                                public String getGoodsName() {
+                                                    return storeService.getGoodsById(e1.getGoodsId()).getName();
+                                                }
+                                            };
+                                            item.setOrderId(e1.getOrderId());
+                                            item.setAmount(e1.getAmount());
+                                            item.setGoodsId(e1.getGoodsId());
+                                            item.setPrice(e1.getPrice());
+                                            return item;
+                                        })
+                                        .toList()
+                        )
+                ).toList();
         return ResponseEntity.ok(orders);
     }
 
