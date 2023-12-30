@@ -10,8 +10,6 @@ import com.sustech.campus.service.CommentService;
 import com.sustech.campus.service.UserService;
 import com.sustech.campus.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +36,9 @@ public class CommentController {
 
     private static final Map<String, MediaType> MEDIA_TYPE_MAP;
 
-    private static final String IMAGE_FOLDER = "src/main/resources/images/";
+    private static final String RESOURCE_FOLDER = "src/main/resources";
+
+    private static final String IMAGE_FOLDER = "/images/";
 
     static {
         // Initialize the media type map
@@ -66,9 +66,8 @@ public class CommentController {
     }
     @GetMapping("/image/{subPath}")
     public ResponseEntity<byte[]> getImageAsResponseEntity(@PathVariable String subPath) throws IOException {
-        String path = "images/" + subPath;
-        Resource image = new ClassPathResource(path);
-        byte[] imageContent = Files.readAllBytes(image.getFile().toPath());
+        Path path = Path.of(RESOURCE_FOLDER, IMAGE_FOLDER, subPath);
+        byte[] imageContent = Files.readAllBytes(path);
         String fileExtension = getFileExtension(subPath);
         MediaType mediaType = MEDIA_TYPE_MAP.getOrDefault(fileExtension.toLowerCase(), MediaType.APPLICATION_OCTET_STREAM);
         return ResponseEntity.ok().contentType(mediaType).body(imageContent);
@@ -81,7 +80,7 @@ public class CommentController {
             @RequestParam("content") String content,
             @RequestParam("commenterId") String commenter,
             @RequestParam("buildingId") String building,
-            @RequestParam("image") MultipartFile image
+            @RequestParam(value = "image", required = false) MultipartFile image
     ) throws IOException {
         Long commenterId = Long.parseLong(commenter);
         Long buildingId = Long.parseLong(building);
@@ -105,8 +104,9 @@ public class CommentController {
             Path path;
             do {
                 fileName = Utils.generateFileName(image.getName());
-                path = Path.of(IMAGE_FOLDER, fileName);
+                path = Path.of(RESOURCE_FOLDER, IMAGE_FOLDER, fileName);
             } while (Files.exists(path));
+            path = path.toAbsolutePath();
             Files.createDirectories(path.getParent());
             image.transferTo(path);
             commentService.addCommentPhoto(result.getId(), fileName);
