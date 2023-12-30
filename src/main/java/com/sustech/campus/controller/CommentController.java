@@ -113,6 +113,7 @@ public class CommentController {
 
     @GetMapping("/building/{buildingId}")
     public ResponseEntity<List<Comment>> getCommentsByBuilding(@PathVariable Long buildingId) {
+        System.out.println(buildingId);
         List<Comment> comments = commentService.getComments(buildingId, null, CommentStatus.APPROVED);
         if (!comments.isEmpty()) {
             comments = comments.stream()
@@ -120,7 +121,7 @@ public class CommentController {
                     .peek(e -> e.setCommenterName(userService.getUserById(e.getCommenterId()).getName()))
                     .peek(e -> e.setPhotos(
                             commentService.getCommentPhotos(e.getId()).stream()
-                                    .peek(e1 -> e1.setPath("localhost:8082/comment/image/" + e1.getPath()))
+                                    .peek(e1 -> e1.setPath("http://localhost:8082/comment/image/" + e1.getPath()))
                                     .sorted(Comparator.comparing(CommentPhoto::getId))
                                     .toList()
                     ))
