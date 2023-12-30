@@ -2,11 +2,13 @@ package com.sustech.campus.controller;
 
 import com.sustech.campus.entity.Comment;
 import com.sustech.campus.entity.CommentPhoto;
+import com.sustech.campus.entity.User;
 import com.sustech.campus.enums.CommentStatus;
 import com.sustech.campus.enums.UserType;
 import com.sustech.campus.interceptor.Access;
 import com.sustech.campus.service.CommentService;
 import com.sustech.campus.service.UserService;
+import com.sustech.campus.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -14,9 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +37,8 @@ public class CommentController {
     private final CommentService commentService;
 
     private static final Map<String, MediaType> MEDIA_TYPE_MAP;
+
+    private static final String IMAGE_FOLDER = "src/main/resources/images/";
 
     static {
         // Initialize the media type map
@@ -69,13 +76,42 @@ public class CommentController {
 
     @Access(level = UserType.USER)
     @PostMapping("/add")
-    public ResponseEntity<Long> addComment(@RequestBody Comment comment) {
-        Comment result = commentService.addComment(comment.getBuildingId(), comment.getCommenterId(), comment.getContent());
-        if (result != null) {
-            return ResponseEntity.ok(result.getId());
-        } else {
-            return ResponseEntity.badRequest().body(null);
+    public ResponseEntity<String> addComment(
+            HttpServletRequest request,
+            @RequestParam("content") String content,
+            @RequestParam("commenterId") String commenter,
+            @RequestParam("buildingId") String building,
+            @RequestParam("image") MultipartFile image
+    ) throws IOException {
+        Long commenterId = Long.parseLong(commenter);
+        Long buildingId = Long.parseLong(building);
+        String token = request.getHeader("TOKEN");
+        if (token == null) {
+            return ResponseEntity.badRequest().body("Illegal token");
         }
+        User user = userService.getUserByToken(token);
+        if (user == null || !user.getId().equals(commenterId)) {
+            return ResponseEntity.badRequest().body("Illegal user");
+        }
+        if (user.getType() == UserType.MUTED) {
+            return ResponseEntity.badRequest().body("User is muted");
+        }
+        Comment result = commentService.addComment(buildingId, commenterId, content);
+        if (result == null) {
+            return ResponseEntity.badRequest().body("Illegal parameters");
+        }
+        if (image != null && !image.isEmpty()) {
+            String fileName;
+            Path path;
+            do {
+                fileName = Utils.generateFileName(image.getName());
+                path = Path.of(IMAGE_FOLDER, fileName);
+            } while (Files.exists(path));
+            Files.createDirectories(path.getParent());
+            image.transferTo(path);
+            commentService.addCommentPhoto(result.getId(), fileName);
+        }
+        return ResponseEntity.ok("Success");
     }
 
     @Access(level = UserType.ADMIN)

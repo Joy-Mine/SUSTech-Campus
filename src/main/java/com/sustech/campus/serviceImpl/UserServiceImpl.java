@@ -5,6 +5,7 @@ import com.sustech.campus.entity.User;
 import com.sustech.campus.enums.UserType;
 import com.sustech.campus.mapper.UserMapper;
 import com.sustech.campus.service.UserService;
+import com.sustech.campus.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,19 +17,6 @@ import java.util.Random;
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
-
-    private String generateToken(String oldToken) {
-        int length = 32;
-        Random random = new Random();
-        StringBuilder builder;
-        do {
-            builder = new StringBuilder();
-            for (int i = 0; i < length; ++i) {
-                builder.append((char) random.nextInt(33, 127));
-            }
-        } while (builder.toString().equals(oldToken));
-        return builder.toString();
-    }
 
     @Autowired
     public UserServiceImpl(UserMapper userMapper) {
@@ -93,7 +81,7 @@ public class UserServiceImpl implements UserService {
         user.setName(username);
         user.setPassword(password);
         user.setType(type);
-        user.setToken(this.generateToken(null));
+        user.setToken(Utils.generateToken(null));
         this.userMapper.insert(user);
         return user;
     }
@@ -130,7 +118,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return null;
         }
-        user.setToken(this.generateToken(user.getToken()));
+        user.setToken(Utils.generateToken(user.getToken()));
         this.userMapper.updateById(user);
         return user.getToken();
     }

@@ -152,8 +152,13 @@ public class BuildingController {
     @GetMapping("/{id}")
     public ResponseEntity<Building> getBuildingByName(@PathVariable String id) {
         Building building = buildingService.getBuildingById(Long.valueOf(id));
-        building.setCoverPath("http://localhost:8082/building/image/"+buildingService.listBuildingPhotos((building.getId())).get(0).getPath());
         if (building != null) {
+            if (!buildingService.listBuildingPhotos((building.getId())).isEmpty()) {
+                building.setCoverPath(
+                        "http://localhost:8082/building/image/" +
+                                buildingService.listBuildingPhotos((building.getId())).get(0).getPath()
+                );
+            }
             return ResponseEntity.ok(building);
         } else {
             return ResponseEntity.notFound().build();
