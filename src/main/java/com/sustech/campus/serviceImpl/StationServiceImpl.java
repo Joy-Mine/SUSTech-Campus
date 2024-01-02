@@ -75,6 +75,18 @@ public class StationServiceImpl implements StationService {
     }
 
     @Override
+    public boolean editStation(long stationId, String newName, double newLatitude, double newLongitude) {
+        Station station=this.getStationById(stationId);
+        if(station==null)
+            return false;
+        station.setName(newName);
+        station.setLatitude(newLatitude);
+        station.setLongitude(newLongitude);
+        this.stationMapper.updateById(station);
+        return false;
+    }
+
+    @Override
     public boolean changeStationName(Long stationId, String newName) {
         Station station = this.getStationById(stationId);
         if (station == null) {
