@@ -52,10 +52,10 @@ public class UserController {
     }
 
     @PostMapping("/batchregister")
-    public ResponseEntity<List<String>> batchRegisterUser(@RequestParam List<User> batchUsers){
+    public ResponseEntity<List<String>> batchRegisterUser(@RequestBody List<User> batchUsers){
         List<String> registeredUsersName=new ArrayList<>();
         for(User user : batchUsers){
-            User responseUser = userService.registerUser(user.getName(), user.getPassword(), user.getType());
+            User responseUser = userService.registerUser(user.getName(), user.getPassword(), UserType.USER);
             if(responseUser!=null){
                 registeredUsersName.add(responseUser.getName());
             }

@@ -48,10 +48,10 @@ public class BuildingController {
     @GetMapping("/")
     public ResponseEntity<List<Building>> getAllBuildings() {
         List<Building> buildings = buildingService.listAllBuildings();
-        for(Building building : buildings){
-            String path="localhost:8082/building/image/"+buildingService.listBuildingPhotos(building.getId()).get(0).getPath();
-            building.setCoverPath(path);
-        }
+//        for(Building building : buildings){
+//            String path="localhost:8082/building/image/"+buildingService.listBuildingPhotos(building.getId()).get(0).getPath();
+//            building.setCoverPath(path);
+//        }
         return ResponseEntity.ok(buildings);
     }
 
@@ -229,8 +229,10 @@ public class BuildingController {
     @Access(level = UserType.ADMIN)
     @PostMapping("/edit")
     public ResponseEntity<String> editBuilding(@RequestBody Building building) {
-        Long buildingId = buildingService.addBuilding(building.getName(), building.getTag(), building.getDescription(), building.getDetails(), building.getLatitude(), building.getLongitude());
-        if (buildingId != null) {
+//        Long buildingId = buildingService.addBuilding(building.getName(), building.getTag(), building.getDescription(), building.getDetails(), building.getLatitude(), building.getLongitude());
+        Building responseBuilding=buildingService.getBuildingById(building.getId());
+        boolean success=buildingService.edit(responseBuilding.getId(), building.getName(), building.getTag(), building.getDescription(), building.getDetails(), building.getLatitude(), building.getLongitude());
+        if (responseBuilding != null && success) {
             return ResponseEntity.ok("Building added successfully.");
         } else {
             return ResponseEntity.badRequest().body("Building already exists.");
