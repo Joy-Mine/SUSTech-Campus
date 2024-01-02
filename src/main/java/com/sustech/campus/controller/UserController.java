@@ -65,9 +65,9 @@ public class UserController {
 
     @PostMapping( "/userlogin")
     public ResponseEntity<Map<String, Object>> userlogin(@RequestBody User user){
-        user.setType(UserType.USER);
+//        user.setType(UserType.USER);
         User responseUser =  userService.getUserByName(user.getName());
-        if(responseUser != null) {
+        if(responseUser != null && responseUser.getType()==UserType.USER) {
             if(user.getPassword().equals(responseUser.getPassword())) {
                 String token = userService.changeToken(responseUser.getId());
                 System.out.println(token);
@@ -90,10 +90,10 @@ public class UserController {
     //deprecated
     @PostMapping( "/adminlogin")
     public ResponseEntity<Map<String, Object>> adminlogin(@RequestBody User user){
-        user.setType(UserType.ADMIN);
+//        user.setType(UserType.ADMIN);
         System.out.println(user.toString());
         User responseUser =  userService.getUserByName(user.getName());
-        if(responseUser != null) {
+        if(responseUser != null && responseUser.getType()==UserType.ADMIN) {
             System.out.println(responseUser.toString());
             if(user.getPassword().equals(responseUser.getPassword())) {
                 String token = userService.changeToken(responseUser.getId());
