@@ -46,6 +46,8 @@ public interface BuildingService {
      */
     boolean deleteBuilding(Long buildingId);
 
+    boolean edit(long id, String name, String tag, String description, String details, double latitude, double longitude);
+
     /**
      * @param buildingId
      * @param newName

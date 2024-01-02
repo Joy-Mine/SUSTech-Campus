@@ -75,6 +75,21 @@ public class BuildingServiceImpl implements BuildingService {
     }
 
     @Override
+    public boolean edit(long id, String name, String tag, String description, String details, double latitude, double longitude) {
+        Building building=this.getBuildingById(id);
+        if(building==null)
+            return false;
+        building.setName(name);
+        building.setTag(tag);
+        building.setDescription(description);
+        building.setDetails(details);
+        building.setLatitude(latitude);
+        building.setLongitude(longitude);
+        this.buildingMapper.updateById(building);
+        return true;
+    }
+
+    @Override
     public boolean changeBuildingName(Long buildingId, String newName) {
         Building building = this.getBuildingById(buildingId);
         if (building == null) {
@@ -84,7 +99,6 @@ public class BuildingServiceImpl implements BuildingService {
         this.buildingMapper.updateById(building);
         return true;
     }
-
 
     @Override
     public boolean changeBuildingLocation(Long buildingId, double newLatitude, double newLongitude) {
