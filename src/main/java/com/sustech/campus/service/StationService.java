@@ -42,6 +42,8 @@ public interface StationService {
      */
     Station getStationByName(String stationName);
 
+    boolean editStation(long stationId, String newName, double newLatitude, double newLongitude);
+
     /**
      * @param stationId
      * @param newName

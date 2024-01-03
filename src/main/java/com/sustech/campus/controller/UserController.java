@@ -51,6 +51,7 @@ public class UserController {
         }
     }
 
+    @Access(level = UserType.ADMIN)
     @PostMapping("/batchregister")
     public ResponseEntity<List<String>> batchRegisterUser(@RequestBody List<User> batchUsers){
         List<String> registeredUsersName=new ArrayList<>();

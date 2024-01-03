@@ -7,7 +7,7 @@ import com.sustech.campus.enums.UserType;
 
 @TableName("user")
 public class User {
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     private String name;

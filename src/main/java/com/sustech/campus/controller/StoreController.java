@@ -15,11 +15,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +46,34 @@ public class StoreController {
         return ResponseEntity.ok(stores);
     }
 
+    private static final String IMAGE_FOLDER = "/images/";
+//    @GetMapping("/image/{subpath}")
+//    public ResponseEntity<byte[]> getGoodsImage(@PathVariable String subpath) throws IOException {
+//        String path=IMAGE_FOLDER+subpath;
+//        Resource image = new ClassPathResource(path);
+//        byte[] imageContent = Files.readAllBytes(image.getFile().toPath());
+//        String fileExtension = getFileExtension(subpath);
+//        MediaType mediaType = MEDIA_TYPE_MAP.getOrDefault(fileExtension.toLowerCase(), MediaType.APPLICATION_OCTET_STREAM);
+//        return ResponseEntity.ok().contentType(mediaType).body(imageContent);
+//    }
+    @GetMapping("/cuisine")
+    public ResponseEntity<List<Goods>> listAllCuisines() {
+        List<Goods> cuisines=storeService.listAllGoods(Long.valueOf(1));
+        for(Goods cuisine : cuisines){
+            String coverPath=storeService.listAllPhotosOfaGood(cuisine.getId()).get(0).getPath();
+            cuisine.setImage("http://localhost:8082/store/image/"+coverPath);
+        }
+        return ResponseEntity.ok(cuisines);
+    }
+    @GetMapping("/product")
+    public ResponseEntity<List<Goods>> listAllProducts() {
+        List<Goods> products=storeService.listAllGoods(Long.valueOf(2));
+        for(Goods product : products){
+            String coverPath=storeService.listAllPhotosOfaGood(product.getId()).get(0).getPath();
+            product.setImage("http://localhost:8082/store/image/"+coverPath);
+        }
+        return ResponseEntity.ok(products);
+    }
 
 
     @Access(level = UserType.ADMIN)
@@ -122,27 +153,59 @@ public class StoreController {
         return ResponseEntity.ok().contentType(mediaType).body(imageContent);
     }
 
+//    @Access(level = UserType.ADMIN)
+//    @PostMapping("/goods/add")
+//    public ResponseEntity<String> addGoods(@RequestBody Goods goods) {
+//        Long goodsId = storeService.addGoods(goods.getStoreId(), goods.getName(), goods.getPrice(), goods.getQuantity());
+//        if (goodsId != null) {
+//            return ResponseEntity.ok("Goods added successfully. ID: " + goodsId);
+//        } else {
+//            return ResponseEntity.badRequest().body("Error adding goods.");
+//        }
+//    }
     @Access(level = UserType.ADMIN)
-    @PostMapping("/goods/add")
-    public ResponseEntity<String> addGoods(@RequestBody Goods goods) {
-        Long goodsId = storeService.addGoods(goods.getStoreId(), goods.getName(), goods.getPrice(), goods.getQuantity());
-        if (goodsId != null) {
-            return ResponseEntity.ok("Goods added successfully. ID: " + goodsId);
+    @PostMapping("/addGood/{storeId}")
+    public String addGoods(
+            @PathVariable long storeId,
+            @RequestParam("name") String name,
+            @RequestParam("price") BigDecimal price,
+            @RequestParam("quantity") Integer quantity,
+            @RequestParam("image") MultipartFile image) {
+        System.out.println(image);
+        if (image!=null && !image.isEmpty()) {
+            try {
+                String originalFileName = image.getOriginalFilename();
+                Path filepath = Paths.get(IMAGE_FOLDER, originalFileName); // 构建文件保存路径
+                // 确保目标目录存在
+                Files.createDirectories(filepath.getParent());
+                // 保存文件
+                Path abPath=Path.of("D:\\ProProject\\OOAD\\campus\\src\\main\\resources\\images\\"+originalFileName);
+                image.transferTo(abPath);
+
+                Long goodsId =storeService.addGoods(storeId,name,price,quantity);
+                storeService.addGoodsPhoto(goodsId, originalFileName);
+
+                return "Building added successfully with the name: " + name;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "Failed to upload the file due to " + e.getMessage();
+            }
         } else {
-            return ResponseEntity.badRequest().body("Error adding goods.");
+            return "No file uploaded";
         }
     }
 
     @Access(level = UserType.ADMIN)
-    @DeleteMapping("/goods/delete/{goodsId}")
-    public ResponseEntity<String> deleteGoods(@PathVariable Long goodsId) {
-        boolean success = storeService.fakeDeleteGoods(goodsId);
+    @PostMapping("/goods/delete")
+    public ResponseEntity<String> deleteGoods(@RequestBody String goodsId) {
+        boolean success = storeService.fakeDeleteGoods(Long.valueOf(goodsId));
         if (success) {
             return ResponseEntity.ok("Goods deleted successfully.");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Goods not found.");
         }
     }
+
 
     @Access(level = UserType.ADMIN)
     @PatchMapping("/goods/change-price/{goodsId}")

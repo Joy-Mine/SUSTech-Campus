@@ -12,7 +12,7 @@ import java.util.List;
 
 @TableName("comment")
 public class Comment {
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     private String content;
@@ -32,6 +32,9 @@ public class Comment {
 
     @TableField(exist = false)
     private String commenterName;
+
+    @TableField(exist = false)
+    private String buildingName;
 
     public Long getId() {
         return id;
@@ -100,6 +103,14 @@ public class Comment {
 
     public String getCommenterName() {
         return commenterName;
+    }
+
+    public void setBuildingName(String buildingName) {
+        this.buildingName = buildingName;
+    }
+
+    public String getBuildingName() {
+        return buildingName;
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.util.List;
 @TableName("goods")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Goods {
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     private String name;
@@ -23,6 +23,15 @@ public class Goods {
     private Integer quantity;
 
     private Boolean hidden;
+
+    @TableField(exist = false)
+    private String image;
+    public String getImage() {
+        return image;
+    }
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     @TableField(exist = false)
     private List<GoodsPhoto> photos;

@@ -51,6 +51,14 @@ public class StationController {
     }
 
     @Access(level = UserType.ADMIN)
+    @PostMapping("/edit")
+    public boolean editStation(@RequestBody Station station) {
+        System.out.println(station.toString());
+        boolean success = stationService.editStation(station.getId(),station.getName(),station.getLatitude(), station.getLongitude());
+        return success;
+    }
+
+    @Access(level = UserType.ADMIN)
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteStation(@PathVariable long id) {
         boolean success = stationService.deleteStation(id);
