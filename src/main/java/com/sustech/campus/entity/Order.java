@@ -12,7 +12,7 @@ import java.util.List;
 
 @TableName("`order`")
 public class Order {
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     private OrderStatus status;

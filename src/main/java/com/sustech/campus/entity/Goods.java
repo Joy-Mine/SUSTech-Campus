@@ -10,7 +10,7 @@ import java.util.List;
 @TableName("goods")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Goods {
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     private String name;

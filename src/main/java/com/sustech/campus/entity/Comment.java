@@ -12,7 +12,7 @@ import java.util.List;
 
 @TableName("comment")
 public class Comment {
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     private String content;

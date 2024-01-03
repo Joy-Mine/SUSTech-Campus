@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 @TableName("building_photo")
 public class BuildingPhoto {
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     @TableField(value = "buildingId")

@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 @TableName("building")
 public class Building {
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     private String name;

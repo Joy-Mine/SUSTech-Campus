@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @TableName("goods_photo")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GoodsPhoto {
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     @TableField(value = "goodsId")
