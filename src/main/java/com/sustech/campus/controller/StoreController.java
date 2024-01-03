@@ -206,18 +206,17 @@ public class StoreController {
     }
     @Access(level = UserType.ADMIN)
     @PostMapping("/edit")
-    public String editGoods(
+    public boolean editGoods(
             @RequestParam("id") String goodsId,
             @RequestParam("name") String name,
             @RequestParam("price") BigDecimal price,
             @RequestParam("quantity") Integer quantity){
 //            try {
                 Long id=Long.valueOf(goodsId);
-                Long deletePathId = storeService.editGoods(id, name, price, quantity);
+                return storeService.editGoods(id, name, price, quantity);
 //                storeService.deleteGoodsPhoto(deletePathId);
 //                storeService.addGoodsPhoto(id, originalFileName);
 
-                return "Edited: " + name;
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //                return "Failed to upload the file due to " + e.getMessage();

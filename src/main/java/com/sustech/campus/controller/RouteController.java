@@ -3,6 +3,7 @@ package com.sustech.campus.controller;
 import com.sustech.campus.entity.Route;
 import com.sustech.campus.entity.RouteInfo;
 import com.sustech.campus.entity.Station;
+import com.sustech.campus.service.BusService;
 import com.sustech.campus.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,12 @@ import java.util.List;
 public class RouteController {
 
     private final RouteService routeService;
+    private final BusService busService;
 
     @Autowired
-    public RouteController(RouteService routeService) {
+    public RouteController(RouteService routeService, BusService busService) {
         this.routeService = routeService;
+        this.busService = busService;
     }
 
     @GetMapping("/planRoute")
@@ -50,4 +53,28 @@ public class RouteController {
         List<RouteInfo> allRoutesInfo=routeService.getAllRoutes();
         return ResponseEntity.ok(allRoutesInfo);
     }
+
+    @PostMapping("/edit")
+    public boolean editRoute(
+//            @RequestBody editRouteDTO dto
+            @RequestParam("routeId") Long routeId,
+            @RequestParam("routeName") String routeName,
+            @RequestParam("selectedStations") List<Long> selectedStations
+    ){
+//        System.out.println(dto.toString());
+//        busService.edidtBuslineName(dto.routeId, dto.routeName);
+//        return busService.changeBusStations(dto.routeId,dto.selectedStations);
+        busService.edidtBuslineName(routeId, routeName);
+        return busService.changeBusStations(routeId,selectedStations);
+    }
+
+    @PostMapping("/add")
+    public boolean addRoute(
+            @RequestParam("routeName") String routeName,
+            @RequestParam("selectedStations") List<Long> selectedStations
+    ){
+        busService.addBusLine(routeName, selectedStations);
+        return true;
+    }
+
 }

@@ -56,7 +56,7 @@ public interface StoreService {
      */
     Long addGoods(Long storeId, String goodsName, BigDecimal price, Integer quantity);
 
-    Long editGoods(Long goodsId, String goodsName, BigDecimal price, Integer quantity);
+    boolean editGoods(Long goodsId, String goodsName, BigDecimal price, Integer quantity);
 
     /**
      * @param storeId

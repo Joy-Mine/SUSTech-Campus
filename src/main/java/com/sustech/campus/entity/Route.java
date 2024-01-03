@@ -14,6 +14,15 @@ public class Route {
     @TableField(value = "stopOrder")
     private int stopOrder;
 
+    public Route() {
+    }
+
+    public Route(Long busId, Long stationId, int stopOrder) {
+        this.busId = busId;
+        this.stationId = stationId;
+        this.stopOrder = stopOrder;
+    }
+
     public Long getBusId() {
         return busId;
     }

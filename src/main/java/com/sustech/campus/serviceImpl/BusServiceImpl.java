@@ -42,6 +42,19 @@ public class BusServiceImpl implements BusService {
     }
 
     @Override
+    public boolean addBusLine(String busLineName, List<Long> stations) {
+        if (this.busLineExists(busLineName)) {
+            return false;
+        }
+        Bus bus = new Bus();
+        bus.setName(busLineName);
+        this.busMapper.insert(bus);
+        for(int i=1;i<=stations.size();++i)
+            routeMapper.insert(new Route(bus.getId(),stations.get(i-1),i));
+        return true;
+    }
+
+    @Override
     public boolean deleteBusLine(Long busId) {
         if (!this.busLineExists(busId)) {
             return false;
@@ -114,6 +127,16 @@ public class BusServiceImpl implements BusService {
             route.setStopOrder(i);
             this.routeMapper.insert(route);
         }
+        return true;
+    }
+
+    @Override
+    public boolean edidtBuslineName(Long busId, String newName) {
+        Bus bus=busMapper.selectById(busId);
+        if (bus==null)
+            return false;
+        bus.setName(newName);
+        this.busMapper.updateById(bus);
         return true;
     }
 }

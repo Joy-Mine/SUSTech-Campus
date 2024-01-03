@@ -12,6 +12,8 @@ public interface BusService {
      */
     Long addBusLine(String busName);
 
+    boolean addBusLine(String busLineName, List<Long> stations);
+
     /**
      * @param busId
      * @return whether deletion succeed
@@ -56,4 +58,5 @@ public interface BusService {
      */
     boolean changeBusStations(Long busId, List<Long> stationIds);
 
+    boolean edidtBuslineName(Long busId, String newName);
 }
