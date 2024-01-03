@@ -1,5 +1,7 @@
 package com.sustech.campus.controller;
 
+import com.sustech.campus.entity.Route;
+import com.sustech.campus.entity.RouteInfo;
 import com.sustech.campus.entity.Station;
 import com.sustech.campus.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +43,11 @@ public class RouteController {
             System.out.println("not route");
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<RouteInfo>> getAllRoutes(){
+        List<RouteInfo> allRoutesInfo=routeService.getAllRoutes();
+        return ResponseEntity.ok(allRoutesInfo);
     }
 }
