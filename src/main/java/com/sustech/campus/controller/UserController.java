@@ -64,6 +64,22 @@ public class UserController {
         return ResponseEntity.ok(registeredUsersName);
     }
 
+    @Access(level = UserType.USER)
+    @PostMapping("canComment")
+    public ResponseEntity<Boolean> checkUserCanComment(@RequestBody String id){
+        User responseUser =  userService.getUserById(Long.valueOf(id));
+        if (responseUser != null && responseUser.getType() == UserType.USER){
+            boolean response = true;
+            return ResponseEntity.ok(response);
+        }else if (responseUser != null && responseUser.getType() == UserType.MUTED){
+            boolean reponse = false;
+            return ResponseEntity.ok(reponse);
+        }else {
+            System.out.println("没有该用户");
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping( "/userlogin")
     public ResponseEntity<Map<String, Object>> userlogin(@RequestBody User user){
 //        user.setType(UserType.USER);

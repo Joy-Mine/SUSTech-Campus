@@ -68,6 +68,7 @@ public class CommentController {
             return ""; // No extension found
         }
     }
+
     @GetMapping("/image/{subPath}")
     public ResponseEntity<byte[]> getImageAsResponseEntity(@PathVariable String subPath) throws IOException {
         Path path = Path.of(RESOURCE_FOLDER, IMAGE_FOLDER, subPath);
@@ -106,13 +107,16 @@ public class CommentController {
         if (image != null && !image.isEmpty()) {
             String fileName;
             Path path;
-            do {
-                fileName = Utils.generateFileName(image.getName());
-                path = Path.of(RESOURCE_FOLDER, IMAGE_FOLDER, fileName);
-            } while (Files.exists(path));
-            path = path.toAbsolutePath();
-            Files.createDirectories(path.getParent());
-            image.transferTo(path);
+
+            fileName = image.getOriginalFilename();
+            System.out.println(fileName);
+            path = Path.of(RESOURCE_FOLDER, IMAGE_FOLDER, fileName);
+            System.out.println(path);
+            if (!Files.exists(path)) {
+                path = path.toAbsolutePath();
+                Files.createDirectories(path.getParent());
+                image.transferTo(path);
+            }
             commentService.addCommentPhoto(result.getId(), fileName);
         }
         return ResponseEntity.ok("Success");
@@ -168,7 +172,7 @@ public class CommentController {
                     .toList();
             return ResponseEntity.ok(comments);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(null);
         }
     }
 
@@ -190,7 +194,7 @@ public class CommentController {
                     .toList();
             return ResponseEntity.ok(comments);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(null);
         }
     }
 }

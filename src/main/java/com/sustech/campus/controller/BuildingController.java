@@ -151,6 +151,7 @@ public class BuildingController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Building> getBuildingByName(@PathVariable String id) {
+        System.out.println(id);
         Building building = buildingService.getBuildingById(Long.valueOf(id));
         if (building != null) {
             if (!buildingService.listBuildingPhotos((building.getId())).isEmpty()) {
