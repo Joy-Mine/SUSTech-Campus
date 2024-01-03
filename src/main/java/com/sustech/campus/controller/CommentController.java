@@ -134,23 +134,27 @@ public class CommentController {
     }
 
     @Access(level = UserType.ADMIN)
-    @PutMapping("/approve/{commentId}")
-    public ResponseEntity<String> approveComment(@PathVariable Long commentId) {
+    @PostMapping("/approve")
+    public ResponseEntity<String> approveComment(@RequestBody Long commentId) {
         boolean success = commentService.approveComment(commentId);
         if (success) {
+            System.out.println("评论允许成功");
             return ResponseEntity.ok("Comment approved.");
         } else {
+            System.out.println("评论允许失败");
             return ResponseEntity.badRequest().body("Invalid comment ID or comment is not in a pending state.");
         }
     }
 
     @Access(level = UserType.ADMIN)
-    @PutMapping("/reject/{commentId}")
-    public ResponseEntity<String> rejectComment(@PathVariable Long commentId) {
+    @PostMapping("/reject")
+    public ResponseEntity<String> rejectComment(@RequestBody Long commentId) {
         boolean success = commentService.rejectComment(commentId);
         if (success) {
+            System.out.println("评论禁止成功");
             return ResponseEntity.ok("Comment rejected.");
         } else {
+            System.out.println("评论禁止失败");
             return ResponseEntity.badRequest().body("Invalid comment ID or comment is not in a pending state.");
         }
     }
