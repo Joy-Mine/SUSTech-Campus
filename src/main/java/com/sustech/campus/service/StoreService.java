@@ -56,6 +56,8 @@ public interface StoreService {
      */
     Long addGoods(Long storeId, String goodsName, BigDecimal price, Integer quantity);
 
+    Long editGoods(Long goodsId, String goodsName, BigDecimal price, Integer quantity);
+
     /**
      * @param storeId
      * @return null if such store does not exist, otherwise not hidden goods in the store with the given id
