@@ -6,6 +6,7 @@ import com.sustech.campus.entity.User;
 import com.sustech.campus.enums.CommentStatus;
 import com.sustech.campus.enums.UserType;
 import com.sustech.campus.interceptor.Access;
+import com.sustech.campus.service.BuildingService;
 import com.sustech.campus.service.CommentService;
 import com.sustech.campus.service.UserService;
 import com.sustech.campus.utils.Utils;
@@ -34,6 +35,8 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    private final BuildingService buildingService;
+
     private static final Map<String, MediaType> MEDIA_TYPE_MAP;
 
     private static final String RESOURCE_FOLDER = "src/main/resources";
@@ -51,9 +54,10 @@ public class CommentController {
     }
 
     @Autowired
-    public CommentController(UserService userService, CommentService commentService) {
+    public CommentController(UserService userService, CommentService commentService, BuildingService buildingService) {
         this.userService = userService;
         this.commentService = commentService;
+        this.buildingService = buildingService;
     }
 
 
@@ -161,6 +165,28 @@ public class CommentController {
                                     .sorted(Comparator.comparing(CommentPhoto::getId))
                                     .toList()
                     ))
+                    .toList();
+            return ResponseEntity.ok(comments);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Access(level = UserType.ADMIN)
+    @GetMapping("/all")
+    public ResponseEntity<List<Comment>> getAllComments() {
+        List<Comment> comments = commentService.getComments(null, null, null);
+        if (!comments.isEmpty()) {
+            comments = comments.stream()
+                    .sorted(Comparator.comparing(Comment::getTime).reversed())
+                    .peek(e -> e.setCommenterName(userService.getUserById(e.getCommenterId()).getName()))
+                    .peek(e -> e.setPhotos(
+                            commentService.getCommentPhotos(e.getId()).stream()
+                                    .peek(e1 -> e1.setPath("http://localhost:8082/comment/image/" + e1.getPath()))
+                                    .sorted(Comparator.comparing(CommentPhoto::getId))
+                                    .toList()
+                    ))
+                    .peek(e -> e.setBuildingName(buildingService.getBuildingById(e.getBuildingId()).getName()))
                     .toList();
             return ResponseEntity.ok(comments);
         } else {
