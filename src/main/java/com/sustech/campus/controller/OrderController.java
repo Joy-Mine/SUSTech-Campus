@@ -126,6 +126,7 @@ public class OrderController {
                 .peek(e -> e.setHidden(null))
                 .toList();
         ObjectMapper objectMapper = new ObjectMapper();
+
         return ResponseEntity.ok(objectMapper.writeValueAsString(statistics));
     }
 }
