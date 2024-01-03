@@ -185,7 +185,7 @@ public class StoreController {
                 Long goodsId =storeService.addGoods(storeId,name,price,quantity);
                 storeService.addGoodsPhoto(goodsId, originalFileName);
 
-                return "Building added successfully with the name: " + name;
+                return "Added: " + name;
             } catch (IOException e) {
                 e.printStackTrace();
                 return "Failed to upload the file due to " + e.getMessage();
@@ -194,7 +194,6 @@ public class StoreController {
             return "No file uploaded";
         }
     }
-
     @Access(level = UserType.ADMIN)
     @PostMapping("/goods/delete")
     public ResponseEntity<String> deleteGoods(@RequestBody String goodsId) {
@@ -204,6 +203,25 @@ public class StoreController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Goods not found.");
         }
+    }
+    @Access(level = UserType.ADMIN)
+    @PostMapping("/edit")
+    public String editGoods(
+            @RequestParam("id") String goodsId,
+            @RequestParam("name") String name,
+            @RequestParam("price") BigDecimal price,
+            @RequestParam("quantity") Integer quantity){
+//            try {
+                Long id=Long.valueOf(goodsId);
+                Long deletePathId = storeService.editGoods(id, name, price, quantity);
+//                storeService.deleteGoodsPhoto(deletePathId);
+//                storeService.addGoodsPhoto(id, originalFileName);
+
+                return "Edited: " + name;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                return "Failed to upload the file due to " + e.getMessage();
+//            }
     }
 
 

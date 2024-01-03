@@ -98,6 +98,19 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    public Long editGoods(Long goodsId, String goodsName, BigDecimal price, Integer quantity) {
+        Goods goods = this.getGoodsById(goodsId);
+        if (goods == null) {
+            return null;
+        }
+        goods.setName(goodsName);
+        goods.setPrice(price);
+        goods.setQuantity(quantity);
+        this.goodsMapper.updateById(goods);
+        return goods.getPhotos().get(0).getId();
+    }
+
+    @Override
     public List<Goods> listAllGoods(Long storeId) {
         return listAllGoods(storeId, false);
     }
