@@ -25,6 +25,15 @@ public class Goods {
     private Boolean hidden;
 
     @TableField(exist = false)
+    private String image;
+    public String getImage() {
+        return image;
+    }
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    @TableField(exist = false)
     private List<GoodsPhoto> photos;
 
     public Long getId() {
