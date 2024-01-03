@@ -62,7 +62,7 @@ public class OrderController {
 
     @Access(level = UserType.USER)
     @GetMapping( "/list/{storeId}")
-    public ResponseEntity<List<Order>> listOrders(HttpServletRequest request, @PathVariable Long storeId){
+    public ResponseEntity<String> listOrders(HttpServletRequest request, @PathVariable Long storeId) throws JsonProcessingException {
         String token = request.getHeader("TOKEN");
         if (token == null) {
             return ResponseEntity.notFound().build();
@@ -97,7 +97,8 @@ public class OrderController {
                                         .toList()
                         )
                 ).toList();
-        return ResponseEntity.ok(orders);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return ResponseEntity.ok(objectMapper.writeValueAsString(orders));
     }
 
     @Access(level = UserType.ADMIN)

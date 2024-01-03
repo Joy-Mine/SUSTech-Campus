@@ -110,13 +110,11 @@ public class StoreController {
                                     storeService.listAllPhotosOfaGood(e.getId()).stream()
                                             .peek(e1 -> e1.setGoodsId(null))
                                             .peek(e1 -> e1.setId(null))
-                                            .peek(e1 -> e1.setPath("localhost:8082/store/image/" + e1.getPath()))
+                                            .peek(e1 -> e1.setPath("http://localhost:8082/store/image/" + e1.getPath()))
                                             .toList()
                             )
                     )
                     .peek(e -> e.setStoreId(null))
-                    .peek(e -> e.setQuantity(null))
-                    .peek(e -> e.setHidden(null))
                     .toList();
             ObjectMapper objectMapper = new ObjectMapper();
             return ResponseEntity.ok(objectMapper.writeValueAsString(goods));

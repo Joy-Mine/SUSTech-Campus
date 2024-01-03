@@ -4,13 +4,17 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sustech.campus.enums.OrderStatus;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 @TableName("`order`")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Order {
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -62,6 +66,11 @@ public class Order {
 
     public List<OrderItem> getItems() {
         return items;
+    }
+
+    public String getStringTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(new Date(this.time));
     }
 
     public BigDecimal getTotalPrice() {
