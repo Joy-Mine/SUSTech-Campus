@@ -70,11 +70,13 @@ public class UserController {
         if(responseUser != null && responseUser.getType()==UserType.USER) {
             if(user.getPassword().equals(responseUser.getPassword())) {
                 String token = userService.changeToken(responseUser.getId());
-                System.out.println(token);
+                System.out.println(responseUser.getId());
                 Map<String, Object> responseMap = new HashMap<>();
+                String stringId = responseUser.getId().toString();
                 responseMap.put("token", token);
-                responseMap.put("name", responseUser.getName());
-                responseMap.put("id", responseUser.getId());
+                responseMap.put("name", responseUser.getName().toString());
+                responseMap.put("id", stringId);
+                System.out.println(responseUser.getId());
                 return ResponseEntity.ok(responseMap);
             }
             else {
