@@ -55,7 +55,7 @@ public class BuildingController {
         return ResponseEntity.ok(buildings);
     }
 
-    private static final String IMAGE_FOLDER = "/images/";
+    private static final String IMAGE_FOLDER = System.getProperty("user.dir")+"/images/";
 //    @PostMapping("/upload")
 //    public String uploadImage(@RequestParam("image") MultipartFile imageFile) {
 //        // 确保上传文件不为空
@@ -120,8 +120,12 @@ public class BuildingController {
     @GetMapping("/image/{subpath}")
     public ResponseEntity<byte[]> getImageAsResponseEntity(@PathVariable String subpath) throws IOException {
         String path=IMAGE_FOLDER+subpath;
-        Resource image = new ClassPathResource(path);
-        byte[] imageContent = Files.readAllBytes(image.getFile().toPath());
+//        Resource image = new ClassPathResource(path);
+//        byte[] imageContent = Files.readAllBytes(image.getFile().toPath());
+        Path imagePath = Paths.get(path);
+        if (!Files.exists(imagePath))
+            return ResponseEntity.ok(null);
+        byte[] imageContent = Files.readAllBytes(imagePath);
         String fileExtension = getFileExtension(subpath);
         MediaType mediaType = MEDIA_TYPE_MAP.getOrDefault(fileExtension.toLowerCase(), MediaType.APPLICATION_OCTET_STREAM);
         return ResponseEntity.ok().contentType(mediaType).body(imageContent);
@@ -199,7 +203,7 @@ public class BuildingController {
                 // 确保目标目录存在
                 Files.createDirectories(filepath.getParent());
                 // 保存文件
-                Path abPath=Path.of("D:\\ProProject\\OOAD\\campus\\src\\main\\resources\\images\\"+originalFileName);
+                Path abPath=Path.of(IMAGE_FOLDER+originalFileName);
                 file.transferTo(abPath);
 
                 Long buildingId =buildingService.addBuilding(name,tag,description,details,latitude,longitude);

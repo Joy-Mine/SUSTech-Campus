@@ -39,7 +39,7 @@ public class CommentController {
 
     private static final Map<String, MediaType> MEDIA_TYPE_MAP;
 
-    private static final String RESOURCE_FOLDER = "src/main/resources";
+    private static final String RESOURCE_FOLDER = System.getProperty("user.dir");
 
     private static final String IMAGE_FOLDER = "/images/";
 

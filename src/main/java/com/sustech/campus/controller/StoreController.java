@@ -46,7 +46,8 @@ public class StoreController {
         return ResponseEntity.ok(stores);
     }
 
-    private static final String IMAGE_FOLDER = "/images/";
+//    private static final String IMAGE_FOLDER = "D:\\ProProject\\OOAD\\campus\\images\\";
+    private static final String IMAGE_FOLDER = System.getProperty("user.dir")+"/images/";
 //    @GetMapping("/image/{subpath}")
 //    public ResponseEntity<byte[]> getGoodsImage(@PathVariable String subpath) throws IOException {
 //        String path=IMAGE_FOLDER+subpath;
@@ -143,9 +144,14 @@ public class StoreController {
     }
     @GetMapping("/image/{subpath}")
     public ResponseEntity<byte[]> getImageAsResponseEntity(@PathVariable String subpath) throws IOException {
-        String path="images/"+subpath;
-        Resource image = new ClassPathResource(path);
-        byte[] imageContent = Files.readAllBytes(image.getFile().toPath());
+//        String path=IMAGE_FOLDER+subpath;
+//        Resource image = new ClassPathResource(path);
+//        byte[] imageContent = Files.readAllBytes(image.getFile().toPath());
+        String path = IMAGE_FOLDER + subpath;
+        Path imagePath = Paths.get(path);
+        if (!Files.exists(imagePath))
+            return ResponseEntity.ok(null);
+        byte[] imageContent = Files.readAllBytes(imagePath);
         String fileExtension = getFileExtension(subpath);
         MediaType mediaType = MEDIA_TYPE_MAP.getOrDefault(fileExtension.toLowerCase(), MediaType.APPLICATION_OCTET_STREAM);
         return ResponseEntity.ok().contentType(mediaType).body(imageContent);
@@ -173,11 +179,12 @@ public class StoreController {
         if (image!=null && !image.isEmpty()) {
             try {
                 String originalFileName = image.getOriginalFilename();
-                Path filepath = Paths.get(IMAGE_FOLDER, originalFileName); // 构建文件保存路径
-                // 确保目标目录存在
-                Files.createDirectories(filepath.getParent());
-                // 保存文件
-                Path abPath=Path.of("D:\\ProProject\\OOAD\\campus\\src\\main\\resources\\images\\"+originalFileName);
+//                Path filepath = Paths.get(IMAGE_FOLDER, originalFileName); // 构建文件保存路径
+//                // 确保目标目录存在
+//                Files.createDirectories(filepath.getParent());
+//                // 保存文件
+                Path abPath=Path.of(IMAGE_FOLDER+originalFileName);
+                System.out.println(abPath);
                 image.transferTo(abPath);
 
                 Long goodsId =storeService.addGoods(storeId,name,price,quantity);
