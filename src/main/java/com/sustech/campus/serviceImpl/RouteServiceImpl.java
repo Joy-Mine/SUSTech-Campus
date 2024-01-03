@@ -1,10 +1,9 @@
 package com.sustech.campus.serviceImpl;
 
-import com.sustech.campus.entity.Building;
-import com.sustech.campus.entity.Route;
-import com.sustech.campus.entity.Station;
+import com.sustech.campus.entity.*;
 import com.sustech.campus.mapper.RouteMapper;
 import com.sustech.campus.service.BuildingService;
+import com.sustech.campus.service.BusService;
 import com.sustech.campus.service.RouteService;
 import com.sustech.campus.service.StationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,24 @@ public class RouteServiceImpl implements RouteService {
     private final BuildingService buildingService;
     private final StationService stationService;
     private final RouteMapper routeMapper;
+    private final BusService busService;
 
     @Autowired
-    public RouteServiceImpl(BuildingService buildingService, StationService stationService, RouteMapper routeMapper) {
+    public RouteServiceImpl(BuildingService buildingService, StationService stationService, RouteMapper routeMapper, BusService busService) {
         this.buildingService = buildingService;
         this.stationService = stationService;
         this.routeMapper = routeMapper;
+        this.busService = busService;
+    }
+
+    @Override
+    public List<RouteInfo> getAllRoutes() {
+        List<RouteInfo> allRoutes=new ArrayList<>();
+        List<Bus> busLines=busService.listAllBusLines();
+        for(Bus busLine : busLines){
+            allRoutes.add(new RouteInfo(busLine.getId(),busLine.getName(),busService.getStations(busLine.getId())));
+        }
+        return allRoutes;
     }
 
     @Override
