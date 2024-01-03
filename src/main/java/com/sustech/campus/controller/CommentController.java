@@ -68,6 +68,7 @@ public class CommentController {
             return ""; // No extension found
         }
     }
+
     @GetMapping("/image/{subPath}")
     public ResponseEntity<byte[]> getImageAsResponseEntity(@PathVariable String subPath) throws IOException {
         Path path = Path.of(RESOURCE_FOLDER, IMAGE_FOLDER, subPath);
@@ -106,13 +107,16 @@ public class CommentController {
         if (image != null && !image.isEmpty()) {
             String fileName;
             Path path;
-            do {
-                fileName = Utils.generateFileName(image.getName());
-                path = Path.of(RESOURCE_FOLDER, IMAGE_FOLDER, fileName);
-            } while (Files.exists(path));
-            path = path.toAbsolutePath();
-            Files.createDirectories(path.getParent());
-            image.transferTo(path);
+
+            fileName = image.getOriginalFilename();
+            System.out.println(fileName);
+            path = Path.of(RESOURCE_FOLDER, IMAGE_FOLDER, fileName);
+            System.out.println(path);
+            if (!Files.exists(path)) {
+                path = path.toAbsolutePath();
+                Files.createDirectories(path.getParent());
+                image.transferTo(path);
+            }
             commentService.addCommentPhoto(result.getId(), fileName);
         }
         return ResponseEntity.ok("Success");
@@ -130,23 +134,27 @@ public class CommentController {
     }
 
     @Access(level = UserType.ADMIN)
-    @PutMapping("/approve/{commentId}")
-    public ResponseEntity<String> approveComment(@PathVariable Long commentId) {
+    @PostMapping("/approve")
+    public ResponseEntity<String> approveComment(@RequestBody Long commentId) {
         boolean success = commentService.approveComment(commentId);
         if (success) {
+            System.out.println("评论允许成功");
             return ResponseEntity.ok("Comment approved.");
         } else {
+            System.out.println("评论允许失败");
             return ResponseEntity.badRequest().body("Invalid comment ID or comment is not in a pending state.");
         }
     }
 
     @Access(level = UserType.ADMIN)
-    @PutMapping("/reject/{commentId}")
-    public ResponseEntity<String> rejectComment(@PathVariable Long commentId) {
+    @PostMapping("/reject")
+    public ResponseEntity<String> rejectComment(@RequestBody Long commentId) {
         boolean success = commentService.rejectComment(commentId);
         if (success) {
+            System.out.println("评论禁止成功");
             return ResponseEntity.ok("Comment rejected.");
         } else {
+            System.out.println("评论禁止失败");
             return ResponseEntity.badRequest().body("Invalid comment ID or comment is not in a pending state.");
         }
     }
@@ -168,7 +176,7 @@ public class CommentController {
                     .toList();
             return ResponseEntity.ok(comments);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(null);
         }
     }
 
@@ -190,7 +198,7 @@ public class CommentController {
                     .toList();
             return ResponseEntity.ok(comments);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(null);
         }
     }
 }

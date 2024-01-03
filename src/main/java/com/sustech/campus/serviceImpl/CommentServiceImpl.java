@@ -40,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setBuildingId(buildingId);
         comment.setCommenterId(commenterId);
         comment.setContent(content);
-        comment.setStatus(CommentStatus.WAITING);
+        comment.setStatus(CommentStatus.REJECTED);
         comment.setTime(System.currentTimeMillis());
         this.commentMapper.insert(comment);
         return comment;
@@ -66,7 +66,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public boolean rejectComment(Long commentId) {
         Comment comment = this.getCommentById(commentId);
-        if (comment == null || comment.getStatus() != CommentStatus.WAITING) {
+        if (comment == null || comment.getStatus() != CommentStatus.APPROVED) {
             return false;
         }
         comment.setStatus(CommentStatus.REJECTED);
@@ -77,7 +77,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public boolean approveComment(Long commentId) {
         Comment comment = this.getCommentById(commentId);
-        if (comment == null || comment.getStatus() != CommentStatus.WAITING) {
+        if (comment == null || comment.getStatus() != CommentStatus.REJECTED) {
             return false;
         }
         comment.setStatus(CommentStatus.APPROVED);
