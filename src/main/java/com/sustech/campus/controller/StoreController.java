@@ -196,15 +196,16 @@ public class StoreController {
     }
 
     @Access(level = UserType.ADMIN)
-    @DeleteMapping("/goods/delete/{goodsId}")
-    public ResponseEntity<String> deleteGoods(@PathVariable Long goodsId) {
-        boolean success = storeService.fakeDeleteGoods(goodsId);
+    @PostMapping("/goods/delete")
+    public ResponseEntity<String> deleteGoods(@RequestBody String goodsId) {
+        boolean success = storeService.fakeDeleteGoods(Long.valueOf(goodsId));
         if (success) {
             return ResponseEntity.ok("Goods deleted successfully.");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Goods not found.");
         }
     }
+
 
     @Access(level = UserType.ADMIN)
     @PatchMapping("/goods/change-price/{goodsId}")
