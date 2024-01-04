@@ -6,6 +6,7 @@ import com.sustech.campus.entity.Goods;
 import com.sustech.campus.entity.Order;
 import com.sustech.campus.entity.OrderItem;
 import com.sustech.campus.entity.User;
+import com.sustech.campus.enums.OrderStatus;
 import com.sustech.campus.enums.UserType;
 import com.sustech.campus.interceptor.Access;
 import com.sustech.campus.service.OrderService;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,7 +98,9 @@ public class OrderController {
                                         })
                                         .toList()
                         )
-                ).toList();
+                )
+                .sorted(Comparator.comparing(Order::getTime).reversed())
+                .toList();
         ObjectMapper objectMapper = new ObjectMapper();
         return ResponseEntity.ok(objectMapper.writeValueAsString(orders));
     }
@@ -128,5 +132,66 @@ public class OrderController {
         ObjectMapper objectMapper = new ObjectMapper();
 
         return ResponseEntity.ok(objectMapper.writeValueAsString(statistics));
+    }
+
+    @Access(level = UserType.ADMIN)
+    @PostMapping("/finish/{orderId}")
+    public ResponseEntity<String> finishOrder(@PathVariable Long orderId) {
+        if (this.orderService.orderFinished(orderId)) {
+            return ResponseEntity.ok("success");
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @Access(level = UserType.USER)
+    @PostMapping("/cancel/{orderId}")
+    public ResponseEntity<String> cancelOrder(HttpServletRequest request, @PathVariable Long orderId) {
+        String token = request.getHeader("TOKEN");
+        if (token == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Order order = orderService.getOrderById(orderId);
+        User user = userService.getUserByToken(token);
+        if (user == null || !order.getPurchaser().equals(user.getId())) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (!orderService.orderCancelled(orderId)) {
+            return ResponseEntity.ok("failed to cancel this order");
+        } else {
+            return ResponseEntity.ok("success");
+        }
+    }
+
+    @Access(level = UserType.ADMIN)
+    @GetMapping("/listUnfinished")
+    public ResponseEntity<String> listUnfinishedOrders() throws JsonProcessingException {
+        List<Order> orders = orderService.listAllOrders(null, null, null).stream()
+                .filter(e -> e.getStatus() == OrderStatus.WAITING_PAYMENT)
+                .map(Order::getId)
+                .map(orderService::getFullOrderById)
+                .peek(e -> e.setPurchaserName(userService.getUserById(e.getPurchaser()).getName()))
+                .peek(
+                        e -> e.setItems(
+                                e.getItems().stream()
+                                        .map(e1 -> {
+                                            OrderItem item = new OrderItem() {
+                                                public String getGoodsName() {
+                                                    return storeService.getGoodsById(e1.getGoodsId(), true).getName();
+                                                }
+                                            };
+                                            item.setOrderId(e1.getOrderId());
+                                            item.setAmount(e1.getAmount());
+                                            item.setGoodsId(e1.getGoodsId());
+                                            item.setPrice(e1.getPrice());
+                                            return item;
+                                        })
+                                        .toList()
+                        )
+                )
+                .sorted(Comparator.comparing(Order::getTime).reversed())
+                .toList();
+        ObjectMapper objectMapper = new ObjectMapper();
+        return ResponseEntity.ok(objectMapper.writeValueAsString(orders));
     }
 }

@@ -42,11 +42,11 @@ public interface OrderService {
      */
     Order getFullOrderById(Long orderId);
 
-    /**
-     * @param orderId
-     * @return false if failed to change the status of the order with the given id, otherwise, true
-     */
-    boolean orderPaid(Long orderId);
+//    /**
+//     * @param orderId
+//     * @return false if failed to change the status of the order with the given id, otherwise, true
+//     */
+//    boolean orderPaid(Long orderId);
 
     /**
      * @param orderId
@@ -60,11 +60,11 @@ public interface OrderService {
      */
     boolean orderFinished(Long orderId);
 
-    /**
-     * @param orderId
-     * @return false if failed to change the status of the order with the given id, otherwise, true
-     */
-    boolean orderRefunded(Long orderId);
+//    /**
+//     * @param orderId
+//     * @return false if failed to change the status of the order with the given id, otherwise, true
+//     */
+//    boolean orderRefunded(Long orderId);
 
     /**
      * this method is only for testing

@@ -117,10 +117,10 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    @Override
-    public boolean orderPaid(Long orderId) {
-        return this.changeOrderStatus(orderId, OrderStatus.WAITING_PAYMENT, OrderStatus.PAID);
-    }
+//    @Override
+//    public boolean orderPaid(Long orderId) {
+//        return this.changeOrderStatus(orderId, OrderStatus.WAITING_PAYMENT, OrderStatus.PAID);
+//    }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackForClassName = {"Exception", "RuntimeException"})
@@ -135,19 +135,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean orderFinished(Long orderId) {
-        return this.changeOrderStatus(orderId, OrderStatus.PAID, OrderStatus.FINISHED);
+        return this.changeOrderStatus(orderId, OrderStatus.WAITING_PAYMENT, OrderStatus.FINISHED);
     }
 
-    @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackForClassName = {"Exception", "RuntimeException"})
-    public boolean orderRefunded(Long orderId) {
-        if (!this.changeOrderStatus(orderId, OrderStatus.PAID, OrderStatus.REFUNDED)) {
-            return false;
-        }
-        Order order = getFullOrderById(orderId);
-        updateGoodsQuantity(order, true);
-        return true;
-    }
+//    @Override
+//    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackForClassName = {"Exception", "RuntimeException"})
+//    public boolean orderRefunded(Long orderId) {
+//        if (!this.changeOrderStatus(orderId, OrderStatus.PAID, OrderStatus.REFUNDED)) {
+//            return false;
+//        }
+//        Order order = getFullOrderById(orderId);
+//        updateGoodsQuantity(order, true);
+//        return true;
+//    }
 
     @Override
     public boolean deleteOrder(Long orderId) {

@@ -28,6 +28,9 @@ public class Order {
     @TableField(exist = false)
     private List<OrderItem> items;
 
+    @TableField(exist = false)
+    private String purchaserName;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -66,6 +69,14 @@ public class Order {
 
     public List<OrderItem> getItems() {
         return items;
+    }
+
+    public String getPurchaserName() {
+        return purchaserName;
+    }
+
+    public void setPurchaserName(String purchaserName) {
+        this.purchaserName = purchaserName;
     }
 
     public String getStringTime() {
