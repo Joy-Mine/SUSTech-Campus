@@ -77,7 +77,7 @@ public class OrderController {
                 .filter(
                         e -> e.getItems().stream()
                                 .map(OrderItem::getGoodsId)
-                                .map(storeService::getGoodsById)
+                                .map(e1 -> storeService.getGoodsById(e1, true))
                                 .anyMatch(e1 -> e1.getStoreId().equals(storeId))
                 ).peek(
                         e -> e.setItems(
@@ -85,7 +85,7 @@ public class OrderController {
                                         .map(e1 -> {
                                             OrderItem item = new OrderItem() {
                                                 public String getGoodsName() {
-                                                    return storeService.getGoodsById(e1.getGoodsId()).getName();
+                                                    return storeService.getGoodsById(e1.getGoodsId(), true).getName();
                                                 }
                                             };
                                             item.setOrderId(e1.getOrderId());

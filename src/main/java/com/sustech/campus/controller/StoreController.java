@@ -101,8 +101,13 @@ public class StoreController {
 
     @Access(level = UserType.USER)
     @GetMapping("/goods/{storeId}")
-    public ResponseEntity<String> listAllGoods(@PathVariable Long storeId) throws JsonProcessingException {
-        List<Goods> goods = storeService.listAllGoods(storeId);
+    public ResponseEntity<String> listAllGoods(
+            @PathVariable Long storeId, @RequestParam(required = false) Boolean includeHidden
+    ) throws JsonProcessingException {
+        if (includeHidden == null) {
+            includeHidden = false;
+        }
+        List<Goods> goods = storeService.listAllGoods(storeId, includeHidden);
         if (goods != null && !goods.isEmpty()) {
             goods = goods.stream()
                     .filter(Objects::nonNull)
